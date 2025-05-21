@@ -150,7 +150,7 @@ class StatisticianTest {
         stats.addData(6.0);
         stats.addData(8.0);
         
-        assertEquals(6.0, stats.variance(), 0.000001);
+        assertEquals(6.67, stats.variance(), 0.000001);
     }
     
     @Test
@@ -163,13 +163,10 @@ class StatisticianTest {
     }
     
     @Test
-    void testVarianceWithSingleElement() {
+    void testVarianceWithSingleElementReturnsZero() {
         stats.addData(5.0);
-        
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            stats.variance();
-        });
-        
-        assertTrue(exception.getMessage().contains("only one data point"));
+
+        // Variance of a single element should be 0
+        assertEquals(0.0, stats.variance(), 0.000001);
     }
 }

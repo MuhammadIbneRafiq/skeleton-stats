@@ -122,7 +122,7 @@ public class Statistician {
         }
         
         // Return the average
-        return Math.round(sum / data.size() * 1000.0) / 1000.0;        
+        return sum / data.size();        
     }
 
     /**
@@ -161,12 +161,10 @@ public class Statistician {
         int size = sortedData.size();
         if (size % 2 == 0) {
             // Even number of elements: average the middle two
-            return Math.round(
-                (sortedData.get(size / 2 - 1) + sortedData.get(size / 2)) / 2.0 * 1000.0
-            ) / 1000.0;
+            return (sortedData.get(size / 2 - 1) + sortedData.get(size / 2)) / 2.0;
         } else {
             // Odd number of elements: return the middle one
-            return Math.round(sortedData.get(size / 2) * 1000.0) / 1000.0;
+            return sortedData.get(size / 2);
         }
     }
 
@@ -297,8 +295,7 @@ public class Statistician {
         // Calculate variance using the n-1 formula for sample variance
         double result = sumSquaredDifferences / (data.size() - 1);
         
-        // Round to 2 decimal places
-        return Math.round(result * 1000.0) / 1000.0;
+        return result;
     }
 
     /**

@@ -270,11 +270,6 @@ public class Statistician {
         // Calculate variance using the n-1 formula for sample variance
         double result = sumSquaredDifferences / (size - 1);
         
-        // Handle potential numerical underflow
-        if (Math.abs(result) < EPSILON) {
-            return 0.0;
-        }
-        
         // Round to 2 decimal places to match test expectations
         // Using Math.round to ensure consistent behavior
         return Math.round(result * 100.0) / 100.0;

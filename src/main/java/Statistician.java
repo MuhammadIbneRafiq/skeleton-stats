@@ -24,7 +24,7 @@ public class Statistician {
      * @param value the data point to add
      * @pre
      * @throws 
-     * @return
+//     * @return
      * @modifies {@code this.data}
      * @post {@code data.length == \old(data.length) + 1 &&
      *        data[data.length] - 1) == value}

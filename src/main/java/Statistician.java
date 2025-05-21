@@ -254,7 +254,6 @@ public class Statistician {
         return sumSquaredDifferences / (size - 1);
     }
     
-
     /**
      * Returns the number of data points in the dataset.
      * @return the size of the dataset

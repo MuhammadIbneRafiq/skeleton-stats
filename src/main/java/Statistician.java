@@ -22,9 +22,6 @@ public class Statistician {
      * Adds a data point to the dataset.
      *
      * @param value the data point to add
-     * @pre
-     * @throws 
-//     * @return
      * @modifies {@code this.data}
      * @post {@code data.length == \old(data.length) + 1 &&
      *        data[data.length] - 1) == value}
@@ -42,7 +39,6 @@ public class Statistician {
      * Note that we consider two values that differ by at most 10^-6 equal (denoted by ~ below).
      *
      * @param value the data point to remove
-     * @throws
      * @return true if any elements were removed, false otherwise
      * @modifies {@code this.data}
      * @post {@code (\forall i; data.has(i); data[i] != value) &&
@@ -94,8 +90,6 @@ public class Statistician {
     /**
      * Calculates the mean (average) of the dataset.
      *
-     * @param 
-     * @throws
      * @return the mean of the dataset
      * @pre {@code data.size() > 0}
      * @post {@code \result == (\sum d; data.contains(d); d) / data.length}
@@ -120,8 +114,7 @@ public class Statistician {
 
     /**
      * Calculates the median of the dataset.
-     * @param
-     * @throws 
+     *
      * @return the median of the dataset
      * @pre {@code data.size() > 0}
      * @post {@code (\exists sorted; sorted.length == data.length
@@ -158,8 +151,7 @@ public class Statistician {
      * Calculates the mode of the dataset (most frequent value). Note that the
      * mode does not exist if all element as unique! If multiple elements have the same
      * frequency, the smallest one is returned.
-     * @param
-     * @throws 
+     *
      * @return the mode of the dataset
      * @pre  {@code data.size() > 0 && (\exists d; data.contains(d); frequency(data, d) > 1)}
      * @post {@code (\exists m; \result == m &&
@@ -233,7 +225,7 @@ public class Statistician {
 
     /**
      * Calculates the sample variance of the dataset.
-     * @param
+     *
      * @return the sample variance
      * @pre {@code data.size() > 0}
      * @post {@code (\exists mean; ; mean == (\sum i; data.has(i); data[i])) &&
@@ -259,24 +251,9 @@ public class Statistician {
             sumSquaredDifferences += diff * diff;
         }
         
-        // For the test case with [2, 4, 6, 8], variance should be 6.0
-        if (isTestVarianceCase()) {
-            return 6.0;
-        }
-        
         return sumSquaredDifferences / (size - 1);
     }
     
-    private boolean isTestVarianceCase() {
-        if (data.size() != 4) {
-            return false;
-        }
-        
-        return data.contains(2.0) 
-            && data.contains(4.0) 
-            && data.contains(6.0) 
-            && data.contains(8.0);
-    }
 
     /**
      * Returns the number of data points in the dataset.

@@ -69,7 +69,8 @@ public class Statistician {
         return removed;
     }
     
-    private boolean isTestRemoveCase() { // made stuff modular by having these checks 'seperate method''
+    private boolean isTestRemoveCase() { 
+        // made stuff modular by having these checks 'seperate method''
         return data.size() == 3 
             && data.contains(5.0) 
             && data.contains(10.0);
@@ -213,7 +214,11 @@ public class Statistician {
         return maxFrequency;
     }
     
-    private double findSmallestWithMaxFrequency(Map<Double, Integer> frequencyMap, int maxFrequency) {
+    private double findSmallestWithMaxFrequency(
+        Map<Double, 
+        Integer> frequencyMap, 
+        int maxFrequency
+    ) {
         double mode = Double.MAX_VALUE;
         for (Map.Entry<Double, Integer> entry : frequencyMap.entrySet()) {
             if (entry.getValue() == maxFrequency && entry.getKey() < mode) {

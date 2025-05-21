@@ -29,7 +29,7 @@ version 1.0.0 @ 2022-11-13
     <!-- Rule 3. -->
     <module name="LineLength">
         <property name="fileExtensions" value="java"/>
-        <property name="max" value="120"/>
+        <property name="max" value="100"/>
         <property name="ignorePattern" value="(^(package|import) .*)|(^.*(https|http)://.*)"/>
     </module>
 

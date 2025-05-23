@@ -72,6 +72,7 @@ public class Statistician {
                 iterator.remove();
                 removed = true;
             }
+
         }
         
         return removed;

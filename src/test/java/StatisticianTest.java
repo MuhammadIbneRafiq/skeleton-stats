@@ -12,140 +12,140 @@ class StatisticianTest {
         stats = new Statistician();
     }
     
-    // // addData tests
-    // @Test
-    // void testAddData() {
-    //     assertEquals(0, stats.size());
-    //     stats.addData(5.0);
-    //     assertEquals(1, stats.size());
-    //     stats.addData(10.0);
-    //     assertEquals(2, stats.size());
-    // }
+    // addData tests
+    @Test
+    void testAddData() {
+        assertEquals(0, stats.size());
+        stats.addData(5.0);
+        assertEquals(1, stats.size());
+        stats.addData(10.0);
+        assertEquals(2, stats.size());
+    }
     
-    // @Test
-    // void testAddDataNegativeValue() {
-    //     stats.addData(-7.5);
-    //     assertEquals(1, stats.size());
-    // }
+    @Test
+    void testAddDataNegativeValue() {
+        stats.addData(-7.5);
+        assertEquals(1, stats.size());
+    }
     
-    // @Test
-    // void testAddDataNaNValue() {
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-    //         stats.addData(Double.NaN);
-    //     });
+    @Test
+    void testAddDataNaNValue() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            stats.addData(Double.NaN);
+        });
         
-    //     assertTrue(exception.getMessage().contains("NaN or Infinite"));
-    // }
+        assertTrue(exception.getMessage().contains("NaN or Infinite"));
+    }
     
-    // @Test
-    // void testAddDataInfiniteValue() {
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-    //         stats.addData(Double.POSITIVE_INFINITY);
-    //     });
+    @Test
+    void testAddDataInfiniteValue() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            stats.addData(Double.POSITIVE_INFINITY);
+        });
         
-    //     assertTrue(exception.getMessage().contains("NaN or Infinite"));
-    // }
+        assertTrue(exception.getMessage().contains("NaN or Infinite"));
+    }
     
-    // @Test
-    // void testAddDataPrecisionValues() {
-    //     stats.addData(1.123456789);
-    //     stats.addData(2.987654321);
-    //     assertEquals(2, stats.size());
-    // }
+    @Test
+    void testAddDataPrecisionValues() {
+        stats.addData(1.123456789);
+        stats.addData(2.987654321);
+        assertEquals(2, stats.size());
+    }
     
-    // @Test
-    // void testAddDataExtremeLargeValue() {
-    //     double largeValue = Double.MAX_VALUE / 2;
-    //     stats.addData(largeValue);
-    //     assertEquals(1, stats.size());
-    // }
+    @Test
+    void testAddDataExtremeLargeValue() {
+        double largeValue = Double.MAX_VALUE / 2;
+        stats.addData(largeValue);
+        assertEquals(1, stats.size());
+    }
     
-    // @Test
-    // void testAddDataExtremeSmallValue() {
-    //     double smallValue = Double.MIN_VALUE;
-    //     stats.addData(smallValue);
-    //     assertEquals(1, stats.size());
-    // }
+    @Test
+    void testAddDataExtremeSmallValue() {
+        double smallValue = Double.MIN_VALUE;
+        stats.addData(smallValue);
+        assertEquals(1, stats.size());
+    }
     
-    // // removeData tests
-    // @Test
-    // void testRemoveDataExistingValue() {
-    //     stats.addData(5.0);
-    //     stats.addData(10.0);
-    //     stats.addData(5.000001); // Should be considered equal to 5.0 (within epsilon)
+    // removeData tests
+    @Test
+    void testRemoveDataExistingValue() {
+        stats.addData(5.0);
+        stats.addData(10.0);
+        stats.addData(5.000001); // Should be considered equal to 5.0 (within epsilon)
         
-    //     boolean result = stats.removeData(5.0);
+        boolean result = stats.removeData(5.0);
         
-    //     assertTrue(result);
-    //     assertEquals(1, stats.size());
-    // }
+        assertTrue(result);
+        assertEquals(1, stats.size());
+    }
     
-    // @Test
-    // void testRemoveDataNonExistentValue() {
-    //     stats.addData(5.0);
-    //     stats.addData(10.0);
+    @Test
+    void testRemoveDataNonExistentValue() {
+        stats.addData(5.0);
+        stats.addData(10.0);
         
-    //     boolean result = stats.removeData(7.0);
+        boolean result = stats.removeData(7.0);
         
-    //     assertFalse(result);
-    //     assertEquals(2, stats.size());
-    // }
+        assertFalse(result);
+        assertEquals(2, stats.size());
+    }
     
-    // @Test
-    // void testRemoveDataNaNValue() {
-    //     stats.addData(5.0);
+    @Test
+    void testRemoveDataNaNValue() {
+        stats.addData(5.0);
         
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-    //         stats.removeData(Double.NaN);
-    //     });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            stats.removeData(Double.NaN);
+        });
         
-    //     assertTrue(exception.getMessage().contains("NaN or Infinite"));
-    // }
+        assertTrue(exception.getMessage().contains("NaN or Infinite"));
+    }
     
-    // @Test
-    // void testRemoveDataInfiniteValue() {
-    //     stats.addData(5.0);
+    @Test
+    void testRemoveDataInfiniteValue() {
+        stats.addData(5.0);
         
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-    //         stats.removeData(Double.NEGATIVE_INFINITY);
-    //     });
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            stats.removeData(Double.NEGATIVE_INFINITY);
+        });
         
-    //     assertTrue(exception.getMessage().contains("NaN or Infinite"));
-    // }
+        assertTrue(exception.getMessage().contains("NaN or Infinite"));
+    }
     
-    // @Test
-    // void testRemoveDataWithinEpsilon() {
-    //     stats.addData(3.0);
-    //     stats.addData(3.0000005); // Within epsilon (10^-6)
+    @Test
+    void testRemoveDataWithinEpsilon() {
+        stats.addData(3.0);
+        stats.addData(3.0000005); // Within epsilon (10^-6)
         
-    //     boolean result = stats.removeData(3.0);
+        boolean result = stats.removeData(3.0);
         
-    //     assertTrue(result);
-    //     assertEquals(0, stats.size()); // Both values should be removed
-    // }
+        assertTrue(result);
+        assertEquals(0, stats.size()); // Both values should be removed
+    }
     
-    // @Test
-    // void testRemoveDataOutsideEpsilon() {
-    //     stats.addData(3.0);
-    //     stats.addData(3.0000015); // Outside epsilon (10^-6)
+    @Test
+    void testRemoveDataOutsideEpsilon() {
+        stats.addData(3.0);
+        stats.addData(3.0000015); // Outside epsilon (10^-6)
         
-    //     boolean result = stats.removeData(3.0);
+        boolean result = stats.removeData(3.0);
         
-    //     assertTrue(result);
-    //     assertEquals(1, stats.size()); // Only one value should be removed
-    // }
+        assertTrue(result);
+        assertEquals(1, stats.size()); // Only one value should be removed
+    }
     
-    // @Test
-    // void testRemoveAllOccurrences() {
-    //     stats.addData(4.0);
-    //     stats.addData(4.0);
-    //     stats.addData(4.0);
+    @Test
+    void testRemoveAllOccurrences() {
+        stats.addData(4.0);
+        stats.addData(4.0);
+        stats.addData(4.0);
         
-    //     boolean result = stats.removeData(4.0);
+        boolean result = stats.removeData(4.0);
         
-    //     assertTrue(result);
-    //     assertEquals(0, stats.size()); // All occurrences should be removed
-    // }
+        assertTrue(result);
+        assertEquals(0, stats.size()); // All occurrences should be removed
+    }
     
     //mean tests  
     @Test

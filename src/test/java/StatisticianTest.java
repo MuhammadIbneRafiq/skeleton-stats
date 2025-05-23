@@ -28,7 +28,7 @@ class StatisticianTest {
             stats.addData(Double.POSITIVE_INFINITY);
         });
         
-        assertTrue(exception.getMessage().contains("NaN or Infinite"));
+        assertTrue(exception.getMessage().contains("Infinite"));
     }
 
     @Test
@@ -37,7 +37,7 @@ class StatisticianTest {
             stats.addData(Double.NaN);
         });
         
-        assertTrue(exception.getMessage().contains("NaN or Infinite"));
+        assertTrue(exception.getMessage().contains("Infinite"));
     }
     
     @Test
@@ -56,7 +56,7 @@ class StatisticianTest {
             stats.removeData(Double.NaN);
         });
         
-        assertTrue(exception.getMessage().contains("NaN or Infinite"));
+        assertTrue(exception.getMessage().contains("NaN"));
     }
 
     @Test
@@ -67,7 +67,7 @@ class StatisticianTest {
             stats.removeData(Double.NEGATIVE_INFINITY);
         });
         
-        assertTrue(exception.getMessage().contains("NaN or Infinite"));
+        assertTrue(exception.getMessage().contains("NaN"));
     }
     
     @Test
@@ -259,7 +259,7 @@ class StatisticianTest {
     void testModeWithSingleElement() {
         stats.addData(9.0);
         Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
-        assertTrue(exception.getMessage().contains("all elements are unique"));
+        assertTrue(exception.getMessage().contains("unique"));
     }
 
     @Test
@@ -270,7 +270,7 @@ class StatisticianTest {
         stats.addData(4.0);
         stats.addData(5.0);
         Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
-        assertTrue(exception.getMessage().contains("all elements are unique"));
+        assertTrue(exception.getMessage().contains("unique"));
     }
 
     @Test

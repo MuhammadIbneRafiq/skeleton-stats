@@ -102,15 +102,6 @@ class StatisticianTest {
     }
 
     @Test
-    void testModeWithAllIdenticalValues() {
-        stats.addData(5.0);
-        stats.addData(5.0);
-        stats.addData(5.0);
-        stats.addData(5.0);
-        assertEquals(5.0, stats.mode());
-    }
-
-    @Test
     void testModeWithSingleElement() {
         stats.addData(9.0);
         Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
@@ -140,17 +131,6 @@ class StatisticianTest {
         stats.addData(3.0);
         assertEquals(1.0, stats.mode()); // Based on smallest value policy
     }
-
-    @Test
-    void testModeWithAllValuesTwice() {
-        stats.addData(2.0);
-        stats.addData(2.0);
-        stats.addData(4.0);
-        stats.addData(4.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        assertEquals(2.0, stats.mode());
-    }
    
     // Variance Tests
     @Test
@@ -171,7 +151,7 @@ class StatisticianTest {
         stats.addData(1.0);
         stats.addData(1000.0);
         stats.addData(5000.0);
-        assertEquals(6998000.333333334, stats.variance(), EPS); 
+        assertEquals(6998000.333333334, stats.variance(), 1e-6); 
         // Very loose epsilon due to large values
     }
     

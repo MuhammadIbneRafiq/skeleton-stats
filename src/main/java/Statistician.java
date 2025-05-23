@@ -27,13 +27,6 @@ public class Statistician {
      *        data[data.length] - 1) == value}
      */
     public void addData(double value) {
-        // Check for NaN or Infinite values
-        if (Double.isNaN(value) || Double.isInfinite(value)) {
-            throw new IllegalArgumentException(
-                "Cannot add NaN or Infinite values to the dataset");
-        }
-        
-        // Add the data point to the list
         data.add(value);
     }
 
@@ -50,13 +43,7 @@ public class Statistician {
      *        \result == (\sum i; 0 <= i < \old(data.length) && \old(data[i]) ~ value; 1) > 0
      * }
      */
-    public boolean removeData(double value) {
-        // Check for NaN or Infinite values
-        if (Double.isNaN(value) || Double.isInfinite(value)) {
-            throw new IllegalArgumentException(
-                "Cannot remove NaN or Infinite values from the dataset");
-        }
-        
+    public boolean removeData(double value) {       
         boolean removed = false;
         Iterator<Double> iterator = data.iterator();
         

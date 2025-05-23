@@ -99,7 +99,13 @@ class StatisticianTest {
         assertTrue(exception.getMessage().contains("NaN or Infinite"));
     }
     
-    //mean tests       
+    //mean tests  
+    @Test
+    void testMeanWithEmptyData() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
+        assertTrue(exception.getMessage().contains("empty"));
+    }
+
     @Test
     void testMeanWithSingleValue() {
         stats.addData(5.0);
@@ -160,6 +166,12 @@ class StatisticianTest {
     }
     
     // Median Tests
+    @Test
+    void testMedianWithEmptyData() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.median());
+        assertTrue(exception.getMessage().contains("empty"));
+    }
+
     @Test
     void testMedianWithSingleElement() {
         stats.addData(7.0);
@@ -243,6 +255,12 @@ class StatisticianTest {
     }
 
     // Mode Tests
+    @Test
+    void testModeWithEmptyData() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
+        assertTrue(exception.getMessage().contains("empty"));
+    }
+
     @Test
     void testModeWithAllIdenticalValues() {
         stats.addData(5.0);
@@ -333,6 +351,12 @@ class StatisticianTest {
         stats.addData(5.0);
         assertEquals(8.0, stats.variance(), 0.000001); 
         // (1-3)^2 + (5-3)^2 = 4 + 4 = 8 / 1 = 8
+    }
+
+    @Test
+    void testVarianceWithEmptyData() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.variance());
+        assertTrue(exception.getMessage().contains("empty"));
     }
 
     @Test

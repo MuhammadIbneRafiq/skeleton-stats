@@ -98,7 +98,14 @@ public class Statistician {
      * @pre {@code data.size() > 0}
      * @post {@code \result == (\sum d; data.contains(d); d) / data.length}
      */
-    public double mean() {       
+    public double mean() {     
+        // check if the dataset is empty
+        if (data.size() == 0) {
+            throw new IllegalArgumentException(
+                "Cannot calculate mean of an empty dataset"
+            );
+        }
+        
         if (data.size() == 1) {
             return data.get(0);
         }   
@@ -124,6 +131,13 @@ public class Statistician {
      *        (data.length % 2 != 0 ==> \result == sorted[data.length/2])}
      */
     public double median() {    
+        // check if the dataset is empty
+        if (data.size() == 0) {
+            throw new IllegalArgumentException(
+                "Cannot calculate median of an empty dataset"
+            );
+        }
+        
         // Create a sorted copy of the data
         List<Double> sortedData = new ArrayList<>(data);
         Collections.sort(sortedData);
@@ -150,8 +164,13 @@ public class Statistician {
      * }
      */
     public double mode() {
-        // no need to check if the dataset is empty 
-        //as the precondition is already met
+        // check if the dataset is empty
+        if (data.size() == 0) {
+            throw new IllegalArgumentException(
+                "Cannot calculate mode of an empty dataset"
+            );
+        }
+        
         // Create frequency map
         Map<Double, Integer> freqMap = createFrequencyMap();
         
@@ -217,7 +236,14 @@ public class Statistician {
      * @pre {@code data.size() > 0}
      * @post {@code \result >= 0}
      */
-    public double variance() {               
+    public double variance() {          
+        // check if the dataset is empty
+        if (data.size() == 0) {
+            throw new IllegalArgumentException(
+                "Cannot calculate variance of an empty dataset"
+            );
+        }
+        
         // Handle single data point case
         if (data.size() == 1) {
             return 0.0;

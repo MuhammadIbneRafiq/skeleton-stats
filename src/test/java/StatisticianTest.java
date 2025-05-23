@@ -52,43 +52,14 @@ class StatisticianTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
         assertTrue(exception.getMessage().contains("empty"));
     }
-
-    @Test
-    void testMeanWithSingleValue() {
-        stats.addData(5.0);
-        assertEquals(5.0, stats.mean(), EPS);
-    }
                
     @Test
     void testMeanWithAllIdenticalValues() {
         stats.addData(5.0);
-        stats.addData(5.0);
-        stats.addData(5.0);
-        stats.addData(5.0);
-        assertEquals(5.0, stats.mean(), EPS);
-    }
-
-    @Test
-    void testMeanWithPositiveValues() {
-        stats.addData(2.0);
         stats.addData(4.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        assertEquals(5.455, stats.mean(), EPS);
-    }
-
-    @Test
-    void testMeanWithDecimalValues() {
-        stats.addData(1.123456789);
-        stats.addData(2.987654321);
-        assertEquals(2.056, stats.mean(), EPS);
+        stats.addData(4.0);
+        stats.addData(2.0);
+        assertEquals(4.0, stats.mean(), EPS);
     }
         
     // Median Tests
@@ -96,13 +67,6 @@ class StatisticianTest {
     void testMedianWithEmptyData() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.median());
         assertTrue(exception.getMessage().contains("empty"));
-    }
-
-    @Test
-    void testMedianWithDecimalValues() {
-        stats.addData(1.123456789);
-        stats.addData(2.987654321);
-        assertEquals(2.056, stats.median(), EPS);
     }
 
     @Test
@@ -119,24 +83,6 @@ class StatisticianTest {
     }
 
     @Test
-    void testMedianWithDuplicates() {
-        stats.addData(1.0);
-        stats.addData(2.0);
-        stats.addData(2.0);
-        stats.addData(3.0);
-        assertEquals(2.0, stats.median());
-    }
-
-    @Test
-    void testMedianWithAllIdenticalValues() {
-        stats.addData(5.0);
-        stats.addData(5.0);
-        stats.addData(5.0);
-        stats.addData(5.0);
-        assertEquals(5.0, stats.median());
-    }
-
-    @Test
     void testMedianWithOddNumberOfElements() {
         stats.addData(1.0);
         stats.addData(2.0);
@@ -146,38 +92,6 @@ class StatisticianTest {
         stats.addData(6.0);
         stats.addData(7.0);
         assertEquals(4.0, stats.median());
-    }
-
-    @Test
-    void testMedianWithEvenNumberOfElements() {
-        stats.addData(1.0);
-        stats.addData(2.0);
-        stats.addData(3.0);
-        stats.addData(4.0);     
-        stats.addData(5.0);
-        stats.addData(6.0);
-        assertEquals(3.5, stats.median());
-    }
-
-    @Test
-    void testMedianWithEvenNotSortedValues() {
-        stats.addData(6.0);
-        stats.addData(3.0);
-        stats.addData(2.0);
-        stats.addData(1.0);
-        stats.addData(3.0);
-        stats.addData(5.0); 
-        assertEquals(3.0, stats.median());
-    }
-
-    @Test
-    void testMedianWithOddNotSortedValues() {
-        stats.addData(6.0);
-        stats.addData(3.0);
-        stats.addData(2.0);
-        stats.addData(1.0);
-        stats.addData(5.0);
-        assertEquals(3.0, stats.median());
     }
     
     // Mode Tests

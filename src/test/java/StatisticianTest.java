@@ -82,12 +82,42 @@ class StatisticianTest {
         stats.addData(5.0);
         assertEquals(5.0, stats.mean());
     }
+
+    @Test
+    void testMeanWithPositiveValues() {
+        stats.addData(2.0);
+        stats.addData(4.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        assertEquals(5.455, stats.mean(), 0.001);
+    }
+
+    @Test
+    void testMeanWithDecimalValues() {
+        stats.addData(1.123456789);
+        stats.addData(2.987654321);
+        assertEquals(2.056, stats.mean(), 0.001);
+    }
         
     // Median Tests
     @Test
     void testMedianWithEmptyData() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.median());
         assertTrue(exception.getMessage().contains("empty"));
+    }
+
+    @Test
+    void testMedianWithDecimalValues() {
+        stats.addData(1.123456789);
+        stats.addData(2.987654321);
+        assertEquals(2.056, stats.median(), 0.001);
     }
 
     @Test

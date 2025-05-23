@@ -293,8 +293,7 @@ class StatisticianTest {
         
         assertEquals(4.0, stats.median());
     }
-    
-    
+        
     @Test
     void testMedianWithDecimalValues() {
         stats.addData(1.1);

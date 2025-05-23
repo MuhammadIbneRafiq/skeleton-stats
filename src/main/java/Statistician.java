@@ -91,8 +91,7 @@ public class Statistician {
         return true;
     }
 
-
-    /*
+    /**
     * Calculates the mean (average) of the dataset.
     * <p>
     * If the dataset contains only one value, that value is returned directly.
@@ -104,11 +103,14 @@ public class Statistician {
     *
     * @post If the dataset contains exactly one element, the result is that element:
     *       {@code data.size() == 1 ==> \result == data.get(0)}
-    * @post Otherwise, the result is the sum of all elements divided by the number of elements:
-    *       {@code data.size() > 1 ==> \result == data.stream().mapToDouble(d -> d).sum() / data.size()}
+    * @post Otherwise, the result is the sum of all elements divided by the
+    *                    number of elements:
+    *       {@code 
+    *        data.size() > 1 ==> \result == data.stream().mapToDouble(d ->
+    *                                   d).sum() / data.size()}
     */
     public double mean() {
-           // Handle edge case: if only one data point, return it directly
+        // if only one data point, return it directly
         if (data.size() == 1) {
             return data.get(0);
         }
@@ -122,8 +124,6 @@ public class Statistician {
         return sum / data.size();        
     }
 
-
-    
     /**
      * Calculates the median (middle value) of the dataset.
      * <p>
@@ -140,10 +140,12 @@ public class Statistician {
      * @post For odd-sized datasets, the result is the middle element when sorted:
      *       {@code data.size() % 2 == 1 ==> \result == sortedData.get(data.size() / 2)}
      * @post For even-sized datasets, the result is the average of the two middle elements:
-     *       {@code data.size() % 2 == 0 ==> \result == (sortedData.get(data.size()/2-1) + sortedData.get(data.size()/2)) / 2.0}
+     *       {@code data.size() % 2 == 0 ==> 
+     *          \result == (sortedData.get(data.size()/2-1) + 
+     *                      sortedData.get(data.size()/2)) / 2.0}
      */
     public double median() {
-           // Handle edge case: if only one data point, return it directly
+        // Handle edge case: if only one data point, return it directly
         if (data.size() == 1) {
             return data.get(0);
         }
@@ -247,8 +249,11 @@ public class Statistician {
      *
      * @post If the dataset contains exactly one element, the result is zero:
      *       {@code data.size() == 1 ==> \result == 0.0}
-     * @post Otherwise, the result is the sum of squared differences from the mean divided by (n-1):
-     *       {@code data.size() > 1 ==> \result == data.stream().mapToDouble(d -> Math.pow(d - mean(), 2)).sum() / (data.size() - 1)}
+     * @post Otherwise, the result is the sum of squared differences 
+     *              from the mean divided by (n-1):
+     *       {@code data.size() > 1 ==> 
+     *              \result == data.stream().mapToDouble(d -> Math.pow(d - mean(), 2)).sum() / 
+     *                              (data.size() - 1)}
      */
     public double variance() {
        
@@ -272,7 +277,7 @@ public class Statistician {
         
         return result;
     }
-
+    
     /**
      * Returns the number of data points in the dataset.
      * @return the size of the dataset

@@ -172,6 +172,7 @@ public class Statistician {
      * @post {@code (\exists m; \result == m &&
      *        (\forall d; data.contains(d); frequency(data, d) <= frequency(data, m)))
      * }
+     * @throws IllegalArgumentException if the mode does not exist
      */
     public double mode() {
         if (data.size() == 1) {

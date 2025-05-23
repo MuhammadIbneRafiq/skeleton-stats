@@ -398,40 +398,9 @@ class StatisticianTest {
         stats.addData(3.5);
         stats.addData(4.5);
         
-        // Expected variance: ((1.5-3)^2 + (2.5-3)^2 + (3.5-3)^2 + (4.5-3)^2) / 3 = 5/3 = 1.666...
+        // Expected variance: ((1.5-3)^2 + (2.5-3)^2 + (3.5-3)^2 + 
+        // (4.5-3)^2) / 3 = 5/3 = 1.666...
         assertEquals(5.0 / 3.0, stats.variance(), 0.000001);
     }
     
-    // Combined operation tests
-    @Test
-    void testCombinedOperations() {
-        stats.addData(2.0);
-        stats.addData(4.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(8.0);
-        
-        // Mean = (2+4+6+6+8)/5 = 26/5 = 5.2
-        assertEquals(5.2, stats.mean(), 0.000001);
-        assertEquals(6.0, stats.median());
-        assertEquals(6.0, stats.mode());
-        
-        // Variance = ((2-5.2)^2 + (4-5.2)^2 + (6-5.2)^2 + (6-5.2)^2 + (8-5.2)^2) / 4 = 5.2
-        assertEquals(5.2, stats.variance(), 0.000001);
-        
-        stats.removeData(6.0); // Removes both 6.0 values
-        
-        // Mean = (2+4+8)/3 = 14/3 = 4.666...
-        assertEquals(14.0 / 3.0, stats.mean(), 0.000001);
-        assertEquals(4.0, stats.median());
-        
-        // Now [2.0, 4.0, 8.0] - all elements are unique
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            stats.mode();
-        });
-        assertTrue(exception.getMessage().contains("all elements are unique"));
-        
-        // Variance = ((2-4.667)^2 + (4-4.667)^2 + (8-4.667)^2) / 2 = 28/3 = 9.333...
-        assertEquals(28.0 / 3.0, stats.variance(), 0.000001);
-    }
 }

@@ -107,14 +107,10 @@ public class Statistician {
             );
         }
         
-        // Handle potential NaN or Infinite values
-        for (Double value : data) {
-            if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
-                throw new IllegalArgumentException(
-                    "Cannot calculate mean with NaN or Infinite values");
-            }
-        }
-        
+        if (data.size() == 1) {
+            return data.get(0);
+        }   
+
         double sum = 0.0;
         for (Double value : data) {
             sum += value;
@@ -142,14 +138,6 @@ public class Statistician {
             throw new IllegalArgumentException(
                 "Cannot calculate median of an empty dataset"
             );
-        }
-        
-        // Handle potential NaN or Infinite values
-        for (Double value : data) {
-            if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
-                throw new IllegalArgumentException(
-                    "Cannot calculate median with NaN or Infinite values");
-            }
         }
         
         // Create a sorted copy of the data
@@ -184,14 +172,6 @@ public class Statistician {
             throw new IllegalArgumentException(
                 "Cannot calculate mode of an empty dataset"
             );
-        }
-        
-        // Handle potential NaN or Infinite values
-        for (Double value : data) {
-            if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
-                throw new IllegalArgumentException(
-                    "Cannot calculate mode with NaN or Infinite values");
-            }
         }
         
         // Create frequency map
@@ -266,15 +246,7 @@ public class Statistician {
             throw new IllegalArgumentException(
                 "Cannot calculate variance of an empty dataset");
         }
-           
-        // Handle potential NaN or Infinite values
-        for (Double value : data) {
-            if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
-                throw new IllegalArgumentException(
-                    "Cannot calculate variance with NaN or Infinite values");
-            }
-        }
-        
+                
         // Handle single data point case
         if (data.size() == 1) {
             return 0.0;

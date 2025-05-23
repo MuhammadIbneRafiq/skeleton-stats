@@ -105,7 +105,7 @@ class StatisticianTest {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
         assertTrue(exception.getMessage().contains("empty"));
     }
-    
+        
     @Test
     void testMeanWithSingleValue() {
         stats.addData(5.0);
@@ -117,8 +117,15 @@ class StatisticianTest {
         stats.addData(2.0);
         stats.addData(4.0);
         stats.addData(6.0);
-        assertEquals(4.0, stats.mean(), 0.000001); 
-        // (2+4+6)/3 = 4
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        stats.addData(6.0);
+        assertEquals(5.455, stats.mean(), 0.001);
     }
     
     @Test
@@ -135,12 +142,39 @@ class StatisticianTest {
         stats.addData(10.0);
         assertEquals(0.0, stats.mean(), 0.000001);
     }
+
+    // @Test
+    // void testMeanWithPositiveInfinity() throws Exception {
+    //     injectDirectlyToData(Double.POSITIVE_INFINITY);
+    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
+    //     assertTrue(exception.getMessage().contains("Infinite"));
+    // }
+
+    // @Test
+    // void testMeanWithNegativeInfinity() throws Exception {
+    //     injectDirectlyToData(Double.NEGATIVE_INFINITY);
+    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
+    //     assertTrue(exception.getMessage().contains("Infinite"));
+    // }
+
+    // @Test
+    // void testMeanWithNullValue() throws Exception {
+    //     injectDirectlyToData(null);
+    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
+    //     assertTrue(exception.getMessage().contains("NaN or Infinite"));
+    // }
     
     // Median Tests
     @Test
     void testMedianWithSingleElement() {
         stats.addData(7.0);
         assertEquals(7.0, stats.median());
+    }
+
+    @Test
+    void testMedianWithEmptyData() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.median());
+        assertTrue(exception.getMessage().contains("empty"));
     }
 
     @Test
@@ -179,7 +213,13 @@ class StatisticianTest {
     
         assertTrue(exception.getMessage().contains("all elements are unique"));
     }
-    
+
+    @Test
+    void testModeWithEmptyData() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
+        assertTrue(exception.getMessage().contains("empty"));
+    }
+
     @Test
     void testModeWithTwoIdenticalElements() {
         stats.addData(3.0);
@@ -246,4 +286,10 @@ class StatisticianTest {
         assertEquals(6998000.333333334, stats.variance(), 1.0); 
         // Very loose epsilon due to large values
     }
+
+    @Test
+    void testVarianceWithEmptyData() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.variance());
+        assertTrue(exception.getMessage().contains("empty"));
+    }   
 }

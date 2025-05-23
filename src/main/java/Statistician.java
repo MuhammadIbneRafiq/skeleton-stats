@@ -92,28 +92,29 @@ public class Statistician {
     }
 
     /**
-    * Calculates the mean (average) of the dataset.
-    * <p>
-    * If the dataset contains only one value, that value is returned directly.
-    *
-    * @return the mean of the dataset
-    *
-    * @pre The dataset must not be empty and must not contain infinite values:
-    *      {@code !data.isEmpty() && data.stream().noneMatch(Double::isInfinite)}
-    *
-    * @post If the dataset contains exactly one element, the result is that element:
-    *       {@code data.size() == 1 ==> \result == data.get(0)}
-    * @post Otherwise, the result is the sum of all elements divided by the
-    *                    number of elements:
-    *       {@code 
-    *        data.size() > 1 ==> \result == data.stream().mapToDouble(d ->
-    *                                   d).sum() / data.size()}
-    */
+     * Calculates the mean (average) of the dataset.
+     *
+     * @return the mean of the dataset
+     * @pre {@code data.size() > 0}
+     * @post {@code \result == (\sum d; data.contains(d); d) / data.length}
+     * @throws IllegalArgumentException if the dataset is empty
+     */
     public double mean() {
-        // if only one data point, return it directly
-        if (data.size() == 1) {
-            return data.get(0);
+        // Check if the dataset is empty
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException(
+                "Cannot calculate mean of an empty dataset"
+            );
         }
+        
+        // Handle potential NaN or Infinite values
+        for (Double value : data) {
+            if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
+                throw new IllegalArgumentException(
+                    "Cannot calculate mean with NaN or Infinite values");
+            }
+        }
+        
         // Calculate the sum of all data points
         double sum = 0.0;
         for (Double value : data) {
@@ -125,29 +126,32 @@ public class Statistician {
     }
 
     /**
-     * Calculates the median (middle value) of the dataset.
-     * <p>
-     * If the dataset contains only one value, that value is returned directly.
-     * For even-sized datasets, the median is the average of the two middle values.
+     * Calculates the median of the dataset.
      *
      * @return the median of the dataset
-     *
-     * @pre The dataset must not be empty and must not contain infinite values:
-     *      {@code !data.isEmpty() && data.stream().noneMatch(Double::isInfinite)}
-     *
-     * @post If the dataset contains exactly one element, the result is that element:
-     *       {@code data.size() == 1 ==> \result == data.get(0)}
-     * @post For odd-sized datasets, the result is the middle element when sorted:
-     *       {@code data.size() % 2 == 1 ==> \result == sortedData.get(data.size() / 2)}
-     * @post For even-sized datasets, the result is the average of the two middle elements:
-     *       {@code data.size() % 2 == 0 ==> 
-     *          \result == (sortedData.get(data.size()/2-1) + 
-     *                      sortedData.get(data.size()/2)) / 2.0}
+     * @pre {@code data.size() > 0}
+     * @post {@code (\exists sorted; sorted.length == data.length
+     *        && multiset(sorted) == multiset(data) &&
+     *        (\forall i; 0 < i < sorted.length; sorted[i-1] <= sorted[i])) &&
+     *        (data.length % 2 == 0 ==> 
+     *        \result == (sorted[data.length/2 - 1] + sorted[data.length/2]) / 2) &&
+     *        (data.length % 2 != 0 ==> \result == sorted[data.length/2])}
+     * @throws IllegalArgumentException if the dataset is empty
      */
     public double median() {
-        // Handle edge case: if only one data point, return it directly
-        if (data.size() == 1) {
-            return data.get(0);
+        // Check if the dataset is empty
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException(
+                "Cannot calculate median of an empty dataset"
+            );
+        }
+        
+        // Handle potential NaN or Infinite values
+        for (Double value : data) {
+            if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
+                throw new IllegalArgumentException(
+                    "Cannot calculate median with NaN or Infinite values");
+            }
         }
         
         // Create a sorted copy of the data
@@ -174,17 +178,31 @@ public class Statistician {
      * @post {@code (\exists m; \result == m &&
      *        (\forall d; data.contains(d); frequency(data, d) <= frequency(data, m)))
      * }
-     * @throws IllegalArgumentException if the mode does not exist
+     * @throws IllegalArgumentException if the dataset is empty or all elements are unique
      */
     public double mode() {
-        if (data.size() == 1) {
-            return data.get(0);
+        // Check if the dataset is empty
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException(
+                "Cannot calculate mode of an empty dataset"
+            );
         }
-                
+        
+        // Handle potential NaN or Infinite values
+        for (Double value : data) {
+            if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
+                throw new IllegalArgumentException(
+                    "Cannot calculate mode with NaN or Infinite values");
+            }
+        }
+        
+        // Create frequency map
         Map<Double, Integer> freqMap = createFrequencyMap();
         
+        // Find the maximum frequency
         int maxFrequency = findMaxFrequency(freqMap);
         
+        // Check if all elements are unique
         if (maxFrequency <= 1) {
             throw new IllegalArgumentException(
                 "Mode does not exist as all elements are unique"
@@ -237,31 +255,33 @@ public class Statistician {
     }
 
     /**
-     * Calculates the variance of the dataset using the sample variance formula.
-     * <p>
-     * If the dataset contains only one value, the variance is 0 since there is no spread.
-     * Uses the sample variance formula (dividing by n-1) to provide an unbiased estimate.
+     * Calculates the variance of the dataset.
      *
-     * @return the variance of the dataset
-     *
-     * @pre The dataset must not be empty and must not contain infinite values:
-     *      {@code !data.isEmpty() && data.stream().noneMatch(Double::isInfinite)}
-     *
-     * @post If the dataset contains exactly one element, the result is zero:
-     *       {@code data.size() == 1 ==> \result == 0.0}
-     * @post Otherwise, the result is the sum of squared differences 
-     *              from the mean divided by (n-1):
-     *       {@code data.size() > 1 ==> 
-     *              \result == data.stream().mapToDouble(d -> Math.pow(d - mean(), 2)).sum() / 
-     *                              (data.size() - 1)}
+     * @return the variance of the dataset IN 2 DECIMAL PLACES
+     * @pre {@code data.size() > 0}
+     * @post {@code \result >= 0}
+     * @throws IllegalArgumentException if the dataset is empty or contains invalid values
      */
     public double variance() {
-       
+        // Check if the dataset is empty
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException(
+                "Cannot calculate variance of an empty dataset");
+        }
+        
         // Handle single data point case
         if (data.size() == 1) {
             return 0.0;
         }
-               
+        
+        // Handle potential NaN or Infinite values
+        for (Double value : data) {
+            if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
+                throw new IllegalArgumentException(
+                    "Cannot calculate variance with NaN or Infinite values");
+            }
+        }
+        
         // Calculate mean using the existing method
         double mean = this.mean();
         
@@ -277,7 +297,7 @@ public class Statistician {
         
         return result;
     }
-    
+
     /**
      * Returns the number of data points in the dataset.
      * @return the size of the dataset

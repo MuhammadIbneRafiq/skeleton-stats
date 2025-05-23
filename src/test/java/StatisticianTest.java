@@ -23,6 +23,15 @@ class StatisticianTest {
     }
         
     @Test
+    void testAddDataInfiniteValue() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            stats.addData(Double.POSITIVE_INFINITY);
+        });
+        
+        assertTrue(exception.getMessage().contains("NaN or Infinite"));
+    }
+
+    @Test
     void testAddDataNaNValue() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
             stats.addData(Double.NaN);
@@ -37,7 +46,8 @@ class StatisticianTest {
         stats.addData(2.987654321);
         assertEquals(2, stats.size());
     }
-           
+
+    // removeData tests
     @Test
     void testRemoveDataNaNValue() {
         stats.addData(5.0);
@@ -47,6 +57,40 @@ class StatisticianTest {
         });
         
         assertTrue(exception.getMessage().contains("NaN or Infinite"));
+    }
+
+    @Test
+    void testRemoveDataInfiniteValue() {
+        stats.addData(5.0);
+        
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            stats.removeData(Double.NEGATIVE_INFINITY);
+        });
+        
+        assertTrue(exception.getMessage().contains("NaN or Infinite"));
+    }
+    
+    @Test
+    void testRemoveDataWithinEpsilon() {
+        stats.addData(3.0);
+        stats.addData(3.0000005); // Within epsilon (10^-6)
+        
+        boolean result = stats.removeData(3.0);
+        
+        assertTrue(result);
+        assertEquals(0, stats.size()); // Both values should be removed
+    }
+
+    @Test
+    void testRemoveDataExistingValue() {
+        stats.addData(5.0);
+        stats.addData(10.0);
+        stats.addData(5.000001); // Should be considered equal to 5.0 (within epsilon)
+        
+        boolean result = stats.removeData(5.0);
+        
+        assertTrue(result);
+        assertEquals(1, stats.size());
     }
     
     @Test

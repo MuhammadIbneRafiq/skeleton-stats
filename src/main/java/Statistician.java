@@ -230,11 +230,12 @@ public class Statistician {
     }
 
     /**
-     * Calculates the variance of the dataset.
+     * Calculates the sample variance of the dataset.
      *
-     * @return the variance of the dataset IN 2 DECIMAL PLACES
+     * @return the sample variance
      * @pre {@code data.size() > 0}
-     * @post {@code \result >= 0}
+     * @post {@code (\exists mean; ; mean == (\sum i; data.has(i); data[i])) &&
+     *       \result == (\sum i; data.has(i); (data[i] - mean)^2) / (data.length - 1)}
      */
     public double variance() {          
         // check if the dataset is empty

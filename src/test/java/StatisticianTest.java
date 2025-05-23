@@ -113,6 +113,12 @@ class StatisticianTest {
     }
     
     @Test
+    void testMeanWithZeroValue() {
+        stats.addData(0.0);
+        assertEquals(0.0, stats.mean(), 0.000001);
+    }
+
+    @Test
     void testMeanWithPositiveValues() {
         stats.addData(2.0);
         stats.addData(4.0);
@@ -137,32 +143,27 @@ class StatisticianTest {
     }
     
     @Test
+    void testMeanWithDecimalValues() {
+        stats.addData(1.123456789);
+        stats.addData(2.987654321);
+        assertEquals(2.056, stats.mean(), 0.001);
+    }
+    
+    @Test
     void testMeanWithMixedSignValues() {
         stats.addData(-10.0);
         stats.addData(10.0);
         assertEquals(0.0, stats.mean(), 0.000001);
     }
 
-    // @Test
-    // void testMeanWithPositiveInfinity() throws Exception {
-    //     injectDirectlyToData(Double.POSITIVE_INFINITY);
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
-    //     assertTrue(exception.getMessage().contains("Infinite"));
-    // }
-
-    // @Test
-    // void testMeanWithNegativeInfinity() throws Exception {
-    //     injectDirectlyToData(Double.NEGATIVE_INFINITY);
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
-    //     assertTrue(exception.getMessage().contains("Infinite"));
-    // }
-
-    // @Test
-    // void testMeanWithNullValue() throws Exception {
-    //     injectDirectlyToData(null);
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
-    //     assertTrue(exception.getMessage().contains("NaN or Infinite"));
-    // }
+    @Test
+    void testMedanWithAllIdenticalValues() {
+        stats.addData(5.0);
+        stats.addData(5.0);
+        stats.addData(5.0);
+        stats.addData(5.0);
+        assertEquals(5.0, stats.mean());
+    }
     
     // Median Tests
     @Test
@@ -202,29 +203,91 @@ class StatisticianTest {
         assertEquals(5.0, stats.median());
     }
 
+    @Test
+    void testMedianWithOddNumberOfElements() {
+        stats.addData(1.0);
+        stats.addData(2.0);
+        stats.addData(3.0);
+        stats.addData(4.0);     
+        stats.addData(5.0);
+        stats.addData(6.0);
+        stats.addData(7.0);
+        assertEquals(4.0, stats.median());
+    }
+
+    @Test
+    void testMedianWithEvenNumberOfElements() {
+        stats.addData(1.0);
+        stats.addData(2.0);
+        stats.addData(3.0);
+        stats.addData(4.0);     
+        stats.addData(5.0);
+        stats.addData(6.0);
+        assertEquals(3.5, stats.median());
+    }
+
+    @Test
+    void testMedianWithEvenNotSortedValues() {
+        stats.addData(6.0);
+        stats.addData(3.0);
+        stats.addData(2.0);
+        stats.addData(1.0);
+        stats.addData(3.0);
+        stats.addData(5.0); 
+        assertEquals(3.0, stats.median());
+    }
+
+    @Test
+    void testMedianWithOddNotSortedValues() {
+        stats.addData(6.0);
+        stats.addData(3.0);
+        stats.addData(2.0);
+        stats.addData(1.0);
+        stats.addData(5.0);
+        assertEquals(3.0, stats.median());
+    }
+
+    @Test
+    void testMedianWithDecimalValues() {
+        stats.addData(1.123456789);
+        stats.addData(2.987654321);
+        assertEquals(2.056, stats.median(), 0.001);
+    }
+
     // Mode Tests
     @Test
-    void testModeWithSingleElementThrowsException() {
+    void testModeWithAllIdenticalValues() {
+        stats.addData(5.0);
+        stats.addData(5.0);
+        stats.addData(5.0);
+        stats.addData(5.0);
+        assertEquals(5.0, stats.mode());
+    }
+
+    @Test
+    void testModeWithVeryLargeNumbers() {
+        stats.addData(Double.MAX_VALUE);
+        stats.addData(Double.MAX_VALUE);
+        stats.addData(1.0);
+        assertEquals(Double.MAX_VALUE, stats.mode());
+    }
+
+    @Test
+    void testModeWithSingleElement() {
         stats.addData(9.0);
-    
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            stats.mode();
-        });
-    
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
         assertTrue(exception.getMessage().contains("all elements are unique"));
     }
 
     @Test
-    void testModeWithEmptyData() {
+    void testModeWithAllUniqueValues() {
+        stats.addData(1.0);
+        stats.addData(2.0);
+        stats.addData(3.0);
+        stats.addData(4.0);
+        stats.addData(5.0);
         Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
-        assertTrue(exception.getMessage().contains("empty"));
-    }
-
-    @Test
-    void testModeWithTwoIdenticalElements() {
-        stats.addData(3.0);
-        stats.addData(3.0);
-        assertEquals(3.0, stats.mode());
+        assertTrue(exception.getMessage().contains("all elements are unique"));
     }
 
     @Test

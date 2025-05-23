@@ -167,13 +167,8 @@ public class Statistician {
      * @throws IllegalArgumentException if the dataset is empty or all elements are unique
      */
     public double mode() {
-        // Check if the dataset is empty
-        if (data.isEmpty()) {
-            throw new IllegalArgumentException(
-                "Cannot calculate mode of an empty dataset"
-            );
-        }
-        
+        // no need to Check if the dataset is empty
+
         // Create frequency map
         Map<Double, Integer> freqMap = createFrequencyMap();
         

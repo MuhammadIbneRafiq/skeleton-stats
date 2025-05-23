@@ -133,11 +133,16 @@ class StatisticianTest {
 
     // Mode Tests
     @Test
-    void testModeWithSingleElement() {
+    void testModeWithSingleElementThrowsException() {
         stats.addData(9.0);
-        assertEquals(9.0, stats.mode());
+    
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+            stats.mode();
+        });
+    
+        assertTrue(exception.getMessage().contains("all elements are unique"));
     }
-
+    
     @Test
     void testModeWithTwoIdenticalElements() {
         stats.addData(3.0);
@@ -200,7 +205,7 @@ class StatisticianTest {
         stats.addData(1.0);
         stats.addData(1000.0);
         stats.addData(5000.0);
-        assertEquals(5640000.0 / 2.0, stats.variance(), 1.0); 
+        assertEquals(6998000.333333334, stats.variance(), 1.0); 
         // Very loose epsilon due to large values
     }
 

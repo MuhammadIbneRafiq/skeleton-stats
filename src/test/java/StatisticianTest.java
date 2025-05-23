@@ -6,7 +6,8 @@ import org.junit.jupiter.api.Test;
 class StatisticianTest {
     //# BEGIN TODO: Implement test cases
     private Statistician stats;
-    
+    private static final double EPS = 1e-6;
+
     @BeforeEach
     void setUp() {
         stats = new Statistician();
@@ -55,7 +56,7 @@ class StatisticianTest {
     @Test
     void testMeanWithSingleValue() {
         stats.addData(5.0);
-        assertEquals(5.0, stats.mean(), 0.000001);
+        assertEquals(5.0, stats.mean(), EPS);
     }
                
     @Test
@@ -64,7 +65,7 @@ class StatisticianTest {
         stats.addData(5.0);
         stats.addData(5.0);
         stats.addData(5.0);
-        assertEquals(5.0, stats.mean());
+        assertEquals(5.0, stats.mean(), EPS);
     }
 
     @Test
@@ -80,14 +81,14 @@ class StatisticianTest {
         stats.addData(6.0);
         stats.addData(6.0);
         stats.addData(6.0);
-        assertEquals(5.455, stats.mean(), 0.001);
+        assertEquals(5.455, stats.mean(), EPS);
     }
 
     @Test
     void testMeanWithDecimalValues() {
         stats.addData(1.123456789);
         stats.addData(2.987654321);
-        assertEquals(2.056, stats.mean(), 0.001);
+        assertEquals(2.056, stats.mean(), EPS);
     }
         
     // Median Tests
@@ -101,7 +102,7 @@ class StatisticianTest {
     void testMedianWithDecimalValues() {
         stats.addData(1.123456789);
         stats.addData(2.987654321);
-        assertEquals(2.056, stats.median(), 0.001);
+        assertEquals(2.056, stats.median(), EPS);
     }
 
     @Test
@@ -241,7 +242,7 @@ class StatisticianTest {
     @Test
     void testVarianceWithOneElements() {
         stats.addData(1.0);
-        assertEquals(0.0, stats.variance(), 0.000001);
+        assertEquals(0.0, stats.variance(), EPS);
     }
 
     @Test
@@ -256,7 +257,7 @@ class StatisticianTest {
         stats.addData(1.0);
         stats.addData(1000.0);
         stats.addData(5000.0);
-        assertEquals(6998000.333333334, stats.variance(), 1.0); 
+        assertEquals(6998000.333333334, stats.variance(), EPS); 
         // Very loose epsilon due to large values
     }
     
@@ -265,6 +266,6 @@ class StatisticianTest {
         stats.addData(5.0);
         stats.addData(5.0);
         stats.addData(5.0);
-        assertEquals(0.0, stats.variance(), 0.000001);
+        assertEquals(0.0, stats.variance(), EPS);
     }
 }

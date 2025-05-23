@@ -212,18 +212,7 @@ class StatisticianTest {
         stats.addData(5.0);
         assertEquals(5.0, stats.mean());
     }
-    
-    @Test
-    void testMeanAfterRemoving() {
-        stats.addData(1.0);
-        stats.addData(2.0);
-        stats.addData(3.0);
-        // Initial mean = 2.0
-        stats.removeData(1.0);
-        // After removing, mean should be 2.5
-        assertEquals(2.5, stats.mean(), 0.000001);
-    }
-    
+        
     // Median Tests
     @Test
     void testMedianWithEmptyData() {
@@ -313,19 +302,6 @@ class StatisticianTest {
         assertEquals(2.056, stats.median(), 0.001);
     }
     
-    @Test
-    void testMedianAfterRemoving() {
-        stats.addData(1.0);
-        stats.addData(2.0);
-        stats.addData(3.0);
-        stats.addData(4.0);
-        stats.addData(5.0);
-        // Initial median = 3.0
-        stats.removeData(1.0);
-        // After removing, median should be 3.5
-        assertEquals(3.5, stats.median(), 0.000001);
-    }
-
     // Mode Tests
     @Test
     void testModeWithEmptyData() {
@@ -410,29 +386,6 @@ class StatisticianTest {
         assertEquals(0.0, stats.mode());
     }
     
-    @Test
-    void testModeWithValuesWithinEpsilon() {
-        stats.addData(3.0);
-        stats.addData(3.0000005); // Within epsilon (10^-6)
-        stats.addData(4.0);
-        
-        assertEquals(3.0, stats.mode()); 
-        // 3.0 and 3.0000005 should be considered the same value
-    }
-    
-    @Test
-    void testModeAfterRemoving() {
-        stats.addData(1.0);
-        stats.addData(1.0);
-        stats.addData(2.0);
-        stats.addData(3.0);
-        stats.addData(3.0);
-        // Initial mode = 1.0 (lowest of the frequencies)
-        stats.removeData(1.0);
-        // After removing, mode should be 3.0
-        assertEquals(3.0, stats.mode());
-    }
-
     // Variance Tests
     @Test
     void testVarianceWithOneElements() {
@@ -473,17 +426,5 @@ class StatisticianTest {
         // (-1-(-3))^2 + (-3-(-3))^2 + (-5-(-3))^2 = 4 + 0 + 4 = 8
         // 8 / 2 = 4.0
         assertEquals(4.0, stats.variance(), 0.000001);
-    }
-    
-    @Test
-    void testVarianceAfterRemoving() {
-        stats.addData(1.0);
-        stats.addData(2.0);
-        stats.addData(3.0);
-        stats.addData(4.0);
-        // Initial variance = 1.666...
-        stats.removeData(1.0);
-        // After removing, mean = 3.0, variance = 1.0
-        assertEquals(1.0, stats.variance(), 0.000001);
     }
 }

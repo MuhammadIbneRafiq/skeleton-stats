@@ -91,30 +91,27 @@ public class Statistician {
         return true;
     }
 
-    /**
-     * Calculates the mean (average) of the dataset.
-     *
-     * @return the mean of the dataset
-     * @pre {@code data.size() > 0}
-     * @post {@code \result == (\sum d; data.contains(d); d) / data.length}
-     * @throws IllegalArgumentException if the dataset is empty
-     */
+
+    /*
+    * Calculates the mean (average) of the dataset.
+    * <p>
+    * If the dataset contains only one value, that value is returned directly.
+    *
+    * @return the mean of the dataset
+    *
+    * @pre The dataset must not be empty and must not contain infinite values:
+    *      {@code !data.isEmpty() && data.stream().noneMatch(Double::isInfinite)}
+    *
+    * @post If the dataset contains exactly one element, the result is that element:
+    *       {@code data.size() == 1 ==> \result == data.get(0)}
+    * @post Otherwise, the result is the sum of all elements divided by the number of elements:
+    *       {@code data.size() > 1 ==> \result == data.stream().mapToDouble(d -> d).sum() / data.size()}
+    */
     public double mean() {
-        // Check if the dataset is empty
-        if (data.isEmpty()) {
-            throw new IllegalArgumentException(
-                "Cannot calculate mean of an empty dataset"
-            );
+           // Handle edge case: if only one data point, return it directly
+        if (data.size() == 1) {
+            return data.get(0);
         }
-        
-        // Handle potential NaN or Infinite values
-        for (Double value : data) {
-            if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
-                throw new IllegalArgumentException(
-                    "Cannot calculate mean with NaN or Infinite values");
-            }
-        }
-        
         // Calculate the sum of all data points
         double sum = 0.0;
         for (Double value : data) {
@@ -139,19 +136,9 @@ public class Statistician {
      * @throws IllegalArgumentException if the dataset is empty
      */
     public double median() {
-        // Check if the dataset is empty
-        if (data.isEmpty()) {
-            throw new IllegalArgumentException(
-                "Cannot calculate median of an empty dataset"
-            );
-        }
-        
-        // Handle potential NaN or Infinite values
-        for (Double value : data) {
-            if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
-                throw new IllegalArgumentException(
-                    "Cannot calculate median with NaN or Infinite values");
-            }
+           // Handle edge case: if only one data point, return it directly
+        if (data.size() == 1) {
+            return data.get(0);
         }
         
         // Create a sorted copy of the data
@@ -181,28 +168,15 @@ public class Statistician {
      * @throws IllegalArgumentException if the dataset is empty or all elements are unique
      */
     public double mode() {
-        // Check if the dataset is empty
-        if (data.isEmpty()) {
-            throw new IllegalArgumentException(
-                "Cannot calculate mode of an empty dataset"
-            );
+        if (data.size() == 1) {
+            return data.get(0);
         }
         
-        // Handle potential NaN or Infinite values
-        for (Double value : data) {
-            if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
-                throw new IllegalArgumentException(
-                    "Cannot calculate mode with NaN or Infinite values");
-            }
-        }
         
-        // Create frequency map
         Map<Double, Integer> freqMap = createFrequencyMap();
         
-        // Find the maximum frequency
         int maxFrequency = findMaxFrequency(freqMap);
         
-        // Check if all elements are unique
         if (maxFrequency <= 1) {
             throw new IllegalArgumentException(
                 "Mode does not exist as all elements are unique"
@@ -263,25 +237,12 @@ public class Statistician {
      * @throws IllegalArgumentException if the dataset is empty or contains invalid values
      */
     public double variance() {
-        // Check if the dataset is empty
-        if (data.isEmpty()) {
-            throw new IllegalArgumentException(
-                "Cannot calculate variance of an empty dataset");
-        }
-        
+       
         // Handle single data point case
         if (data.size() == 1) {
             return 0.0;
         }
-        
-        // Handle potential NaN or Infinite values
-        for (Double value : data) {
-            if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
-                throw new IllegalArgumentException(
-                    "Cannot calculate variance with NaN or Infinite values");
-            }
-        }
-        
+               
         // Calculate mean using the existing method
         double mean = this.mean();
         

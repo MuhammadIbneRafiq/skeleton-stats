@@ -115,13 +115,11 @@ public class Statistician {
             }
         }
         
-        // Calculate the sum of all data points
         double sum = 0.0;
         for (Double value : data) {
             sum += value;
         }
         
-        // Return the average
         return sum / data.size();        
     }
 
@@ -268,12 +266,7 @@ public class Statistician {
             throw new IllegalArgumentException(
                 "Cannot calculate variance of an empty dataset");
         }
-        
-        // Handle single data point case
-        if (data.size() == 1) {
-            return 0.0;
-        }
-        
+           
         // Handle potential NaN or Infinite values
         for (Double value : data) {
             if (value == null || Double.isNaN(value) || Double.isInfinite(value)) {
@@ -282,6 +275,11 @@ public class Statistician {
             }
         }
         
+        // Handle single data point case
+        if (data.size() == 1) {
+            return 0.0;
+        }
+
         // Calculate mean using the existing method
         double mean = this.mean();
         

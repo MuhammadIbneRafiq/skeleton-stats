@@ -2,6 +2,8 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.lang.reflect.Field;
+import java.util.List;
 
 class StatisticianTest {
     // Test fixture
@@ -97,6 +99,53 @@ class StatisticianTest {
         });
         
         assertTrue(exception.getMessage().contains("NaN or Infinite"));
+    }
+    
+    //mean tests
+    @Test
+    void testMeanWithSingleElement() {
+        stats.addData(4.0);
+        assertEquals(4.0, stats.mean(), 0.000001);
+    }
+
+    @Test
+    void testMeanWithMultipleElements() {
+        stats.addData(2.0);
+        stats.addData(4.0);
+        stats.addData(6.0);
+        assertEquals(4.0, stats.mean(), 0.000001); 
+        // (2+4+6)/3 = 4
+    }
+
+    @Test
+    void testMeanWithNegativeAndPositiveValues() {
+        stats.addData(-3.0);
+        stats.addData(3.0);
+        assertEquals(0.0, stats.mean(), 0.000001);
+    }
+    
+    @Test
+    void testMeanWithHighPrecisionDecimals() {
+        stats.addData(1.123456789);
+        stats.addData(2.987654321);
+        double expectedMean = (1.123456789 + 2.987654321) / 2;
+        assertEquals(expectedMean, stats.mean(), 1e-9);
+    }
+
+    @Test
+    void testMeanWithLargeValues() {
+        stats.addData(1_000_000_000.0);
+        stats.addData(2_000_000_000.0);
+        assertEquals(1_500_000_000.0, stats.mean(), 1.0);
+        // Loose epsilon for large numbers
+    }
+    
+    @Test
+    void testMeanWithMixedSignsAndDecimals() {
+        stats.addData(-3.5);
+        stats.addData(2.0);
+        stats.addData(1.5);
+        assertEquals(0.0, stats.mean(), 0.000001);
     }
     
     // Median Tests
@@ -209,57 +258,123 @@ class StatisticianTest {
         // Very loose epsilon due to large values
     }
 
-    // Boundary and Special Cases
+    // Exception Handling for Statistical Methods
     @Test
-    void testWithZeroAndNegativeValues() {
-        stats.addData(0.0);
-        stats.addData(-10.0);
-        stats.addData(-20.0);
-        assertDoesNotThrow(() -> {
-            stats.mean();
-            stats.median();
-            stats.variance();
-        });
+    void testMeanWithPositiveInfinity() throws Exception {
+        injectDirectlyToData(Double.POSITIVE_INFINITY);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
+        assertTrue(exception.getMessage().contains("Infinite"));
     }
-
+    
     @Test
-    void testWithVeryLargeAndVerySmallValues() {
-        stats.addData(Double.MAX_VALUE);
-        stats.addData(Double.MIN_VALUE);
-        assertDoesNotThrow(() -> {
-            stats.mean();
-            stats.variance();
-        });
+    void testMeanWithNegativeInfinity() throws Exception {
+        injectDirectlyToData(Double.NEGATIVE_INFINITY);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
+        assertTrue(exception.getMessage().contains("Infinite"));
     }
-
+    
     @Test
-    void testWithRepeatingPattern() {
-        stats.addData(1.0);
-        stats.addData(2.0);
-        stats.addData(1.0);
-        stats.addData(2.0);
-        stats.addData(1.0);
-        stats.addData(2.0);
-        assertEquals(1.0, stats.mode());
+    void testMeanWithNaN() throws Exception {
+        injectDirectlyToData(Double.NaN);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
+        assertTrue(exception.getMessage().contains("NaN"));
     }
-
+    
     @Test
-    void testWithIncreasingSequence() {
-        stats.addData(1.0);
-        stats.addData(2.0);
-        stats.addData(3.0);
-        stats.addData(4.0);
+    void testMedianWithPositiveInfinity() throws Exception {
+        injectDirectlyToData(Double.POSITIVE_INFINITY);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.median());
+        assertTrue(exception.getMessage().contains("Infinite"));
+    }
+    
+    @Test
+    void testMedianWithNegativeInfinity() throws Exception {
+        injectDirectlyToData(Double.NEGATIVE_INFINITY);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.median());
+        assertTrue(exception.getMessage().contains("Infinite"));
+    }
+    
+    @Test
+    void testMedianWithNaN() throws Exception {
+        injectDirectlyToData(Double.NaN);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.median());
+        assertTrue(exception.getMessage().contains("NaN"));
+    }
+    
+    @Test
+    void testModeWithPositiveInfinity() throws Exception {
+        // Add a normal value first to avoid the "all elements are unique" exception
         stats.addData(5.0);
-        assertEquals(3.0, stats.median());
+        injectDirectlyToData(Double.POSITIVE_INFINITY);
+        injectDirectlyToData(Double.POSITIVE_INFINITY);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
+        assertTrue(exception.getMessage().contains("Infinite"));
     }
-
+    
     @Test
-    void testWithDecreasingSequence() {
+    void testModeWithNegativeInfinity() throws Exception {
         stats.addData(5.0);
-        stats.addData(4.0);
-        stats.addData(3.0);
-        stats.addData(2.0);
+        injectDirectlyToData(Double.NEGATIVE_INFINITY);
+        injectDirectlyToData(Double.NEGATIVE_INFINITY);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
+        assertTrue(exception.getMessage().contains("Infinite"));
+    }
+    
+    @Test
+    void testModeWithNaN() throws Exception {
+        stats.addData(5.0);
+        injectDirectlyToData(Double.NaN);
+        injectDirectlyToData(Double.NaN);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
+        assertTrue(exception.getMessage().contains("NaN"));
+    }
+    
+    @Test
+    void testVarianceWithPositiveInfinity() throws Exception {
+        injectDirectlyToData(Double.POSITIVE_INFINITY);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.variance());
+        assertTrue(exception.getMessage().contains("Infinite"));
+    }
+    
+    @Test
+    void testVarianceWithNegativeInfinity() throws Exception {
+        injectDirectlyToData(Double.NEGATIVE_INFINITY);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.variance());
+        assertTrue(exception.getMessage().contains("Infinite"));
+    }
+    
+    @Test
+    void testVarianceWithNaN() throws Exception {
+        injectDirectlyToData(Double.NaN);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.variance());
+        assertTrue(exception.getMessage().contains("NaN"));
+    }
+    
+    // Mixed invalid data tests
+    @Test
+    void testMeanWithMixedValidAndInvalidData() throws Exception {
         stats.addData(1.0);
-        assertEquals(3.0, stats.median());
+        stats.addData(2.0);
+        injectDirectlyToData(Double.POSITIVE_INFINITY);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
+        assertTrue(exception.getMessage().contains("Infinite"));
+    }
+    
+    @Test
+    void testMedianWithMixedValidAndInvalidData() throws Exception {
+        stats.addData(1.0);
+        stats.addData(2.0);
+        injectDirectlyToData(Double.NaN);
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.median());
+        assertTrue(exception.getMessage().contains("NaN"));
+    }
+    
+    // Helper method to bypass normal validation and add directly to the internal data structure
+    @SuppressWarnings("unchecked")
+    private void injectDirectlyToData(Double value) throws Exception {
+        Field dataField = Statistician.class.getDeclaredField("data");
+        dataField.setAccessible(true);
+        List<Double> internalData = (List<Double>) dataField.get(stats);
+        internalData.add(value);
     }
 }

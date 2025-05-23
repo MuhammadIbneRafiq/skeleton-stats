@@ -57,9 +57,9 @@ class StatisticianTest {
     void testMeanWithAllIdenticalValues() {
         stats.addData(5.0);
         stats.addData(4.0);
-        stats.addData(4.0);
+        stats.addData(3.0);
         stats.addData(2.0);
-        assertEquals(4.0, stats.mean(), EPS);
+        assertEquals(3.5, stats.mean(), EPS);
     }
         
     // Median Tests

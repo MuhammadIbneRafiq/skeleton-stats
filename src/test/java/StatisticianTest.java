@@ -53,6 +53,20 @@ class StatisticianTest {
         assertEquals(2, stats.size());
     }
     
+    @Test
+    void testAddDataExtremeLargeValue() {
+        double largeValue = Double.MAX_VALUE / 2;
+        stats.addData(largeValue);
+        assertEquals(1, stats.size());
+    }
+    
+    @Test
+    void testAddDataExtremeSmallValue() {
+        double smallValue = Double.MIN_VALUE;
+        stats.addData(smallValue);
+        assertEquals(1, stats.size());
+    }
+    
     // removeData tests
     @Test
     void testRemoveDataExistingValue() {
@@ -99,12 +113,46 @@ class StatisticianTest {
         assertTrue(exception.getMessage().contains("NaN or Infinite"));
     }
     
+    @Test
+    void testRemoveDataWithinEpsilon() {
+        stats.addData(3.0);
+        stats.addData(3.0000005); // Within epsilon (10^-6)
+        
+        boolean result = stats.removeData(3.0);
+        
+        assertTrue(result);
+        assertEquals(0, stats.size()); // Both values should be removed
+    }
+    
+    @Test
+    void testRemoveDataOutsideEpsilon() {
+        stats.addData(3.0);
+        stats.addData(3.0000015); // Outside epsilon (10^-6)
+        
+        boolean result = stats.removeData(3.0);
+        
+        assertTrue(result);
+        assertEquals(1, stats.size()); // Only one value should be removed
+    }
+    
+    @Test
+    void testRemoveAllOccurrences() {
+        stats.addData(4.0);
+        stats.addData(4.0);
+        stats.addData(4.0);
+        
+        boolean result = stats.removeData(4.0);
+        
+        assertTrue(result);
+        assertEquals(0, stats.size()); // All occurrences should be removed
+    }
+    
     //mean tests  
-    // @Test
-    // void testMeanWithEmptyData() {
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
-    //     assertTrue(exception.getMessage().contains("empty"));
-    // }
+    @Test
+    void testMeanWithEmptyData() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
+        assertTrue(exception.getMessage().contains("empty"));
+    }
 
     @Test
     void testMeanWithSingleValue() {
@@ -165,12 +213,23 @@ class StatisticianTest {
         assertEquals(5.0, stats.mean());
     }
     
+    @Test
+    void testMeanAfterRemoving() {
+        stats.addData(1.0);
+        stats.addData(2.0);
+        stats.addData(3.0);
+        // Initial mean = 2.0
+        stats.removeData(1.0);
+        // After removing, mean should be 2.5
+        assertEquals(2.5, stats.mean(), 0.000001);
+    }
+    
     // Median Tests
-    // @Test
-    // void testMedianWithEmptyData() {
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.median());
-    //     assertTrue(exception.getMessage().contains("empty"));
-    // }
+    @Test
+    void testMedianWithEmptyData() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.median());
+        assertTrue(exception.getMessage().contains("empty"));
+    }
 
     @Test
     void testMedianWithSingleElement() {
@@ -253,13 +312,26 @@ class StatisticianTest {
         stats.addData(2.987654321);
         assertEquals(2.056, stats.median(), 0.001);
     }
+    
+    @Test
+    void testMedianAfterRemoving() {
+        stats.addData(1.0);
+        stats.addData(2.0);
+        stats.addData(3.0);
+        stats.addData(4.0);
+        stats.addData(5.0);
+        // Initial median = 3.0
+        stats.removeData(1.0);
+        // After removing, median should be 3.5
+        assertEquals(3.5, stats.median(), 0.000001);
+    }
 
     // Mode Tests
-    // @Test
-    // void testModeWithEmptyData() {
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
-    //     assertTrue(exception.getMessage().contains("empty"));
-    // }
+    @Test
+    void testModeWithEmptyData() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
+        assertTrue(exception.getMessage().contains("empty"));
+    }
 
     @Test
     void testModeWithAllIdenticalValues() {
@@ -337,6 +409,29 @@ class StatisticianTest {
         stats.addData(2.0);
         assertEquals(0.0, stats.mode());
     }
+    
+    @Test
+    void testModeWithValuesWithinEpsilon() {
+        stats.addData(3.0);
+        stats.addData(3.0000005); // Within epsilon (10^-6)
+        stats.addData(4.0);
+        
+        assertEquals(3.0, stats.mode()); 
+        // 3.0 and 3.0000005 should be considered the same value
+    }
+    
+    @Test
+    void testModeAfterRemoving() {
+        stats.addData(1.0);
+        stats.addData(1.0);
+        stats.addData(2.0);
+        stats.addData(3.0);
+        stats.addData(3.0);
+        // Initial mode = 1.0 (lowest of the frequencies)
+        stats.removeData(1.0);
+        // After removing, mode should be 3.0
+        assertEquals(3.0, stats.mode());
+    }
 
     // Variance Tests
     @Test
@@ -353,11 +448,12 @@ class StatisticianTest {
         // (1-3)^2 + (5-3)^2 = 4 + 4 = 8 / 1 = 8
     }
 
-    // @Test
-    // void testVarianceWithEmptyData() {
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.variance());
-    //     assertTrue(exception.getMessage().contains("empty"));
-    // }
+    @Test
+    void testVarianceWithEmptyData() {
+        Exception exception = assertThrows(
+            IllegalArgumentException.class, () -> stats.variance());
+        assertTrue(exception.getMessage().contains("empty"));
+    }
 
     @Test
     void testVarianceWithLargeDifferences() {
@@ -366,5 +462,104 @@ class StatisticianTest {
         stats.addData(5000.0);
         assertEquals(6998000.333333334, stats.variance(), 1.0); 
         // Very loose epsilon due to large values
+    }
+    
+    @Test
+    void testVarianceWithAllIdenticalValues() {
+        stats.addData(5.0);
+        stats.addData(5.0);
+        stats.addData(5.0);
+        assertEquals(0.0, stats.variance(), 0.000001);
+    }
+    
+    @Test
+    void testVarianceWithThreeValues() {
+        stats.addData(2.0);
+        stats.addData(4.0);
+        stats.addData(6.0);
+        // Mean = 4.0
+        // (2-4)^2 + (4-4)^2 + (6-4)^2 = 4 + 0 + 4 = 8
+        // 8 / 2 = 4.0
+        assertEquals(4.0, stats.variance(), 0.000001);
+    }
+    
+    @Test
+    void testVarianceWithNegativeValues() {
+        stats.addData(-1.0);
+        stats.addData(-3.0);
+        stats.addData(-5.0);
+        // Mean = -3.0
+        // (-1-(-3))^2 + (-3-(-3))^2 + (-5-(-3))^2 = 4 + 0 + 4 = 8
+        // 8 / 2 = 4.0
+        assertEquals(4.0, stats.variance(), 0.000001);
+    }
+    
+    @Test
+    void testVarianceAfterRemoving() {
+        stats.addData(1.0);
+        stats.addData(2.0);
+        stats.addData(3.0);
+        stats.addData(4.0);
+        // Initial variance = 1.666...
+        stats.removeData(1.0);
+        // After removing, mean = 3.0, variance = 1.0
+        assertEquals(1.0, stats.variance(), 0.000001);
+    }
+    
+    // Combined operation tests
+    @Test
+    void testAddRemoveSequence() {
+        stats.addData(1.0);
+        stats.addData(2.0);
+        stats.addData(3.0);
+        assertEquals(3, stats.size());
+        
+        stats.removeData(2.0);
+        assertEquals(2, stats.size());
+        
+        stats.addData(4.0);
+        assertEquals(3, stats.size());
+        
+        assertEquals(2.666666666666667, stats.mean(), 0.000001);
+    }
+    
+    @Test
+    void testAddRemoveNearEpsilonValues() {
+        stats.addData(1.0);
+        stats.addData(1.0000005); // Within epsilon
+        stats.addData(1.0000015); // Outside epsilon
+        
+        assertEquals(3, stats.size());
+        
+        boolean result = stats.removeData(1.0);
+        assertTrue(result);
+        
+        assertEquals(1, stats.size());
+        assertEquals(1.0000015, stats.mean(), 0.000001);
+    }
+    
+    @Test
+    void testStatisticianConsistency() {
+        // Add data
+        stats.addData(1.0);
+        stats.addData(2.0);
+        stats.addData(3.0);
+        stats.addData(3.0);
+        stats.addData(4.0);
+        
+        // Check all statistics
+        assertEquals(2.6, stats.mean(), 0.000001);
+        assertEquals(3.0, stats.median());
+        assertEquals(3.0, stats.mode());
+        assertEquals(1.3, stats.variance(), 0.000001);
+        
+        // Remove a value
+        stats.removeData(1.0);
+        
+        // Check statistics again
+        assertEquals(3.0, stats.mean(), 0.000001);
+        assertEquals(3.0, stats.median());
+        assertEquals(3.0, stats.mode());
+        assertEquals(0.666666666666667, stats.variance(), 0.000001);
     }
 }

@@ -151,7 +151,7 @@ public class Statistician {
      */
     public double mode() {
         // no need to check if the dataset is empty 
-        // as the precondition is already met
+        //as the precondition is already met
         // Create frequency map
         Map<Double, Integer> freqMap = createFrequencyMap();
         
@@ -219,15 +219,11 @@ public class Statistician {
      */
     public double variance() {               
         // Handle single data point case
-        // check if mean of the dataset exists
-
         if (data.size() == 1) {
             return 0.0;
         }
 
-        if (!Double.isFinite(this.mean())) {
-            throw new IllegalArgumentException("Variance calculation failed: invalid mean");
-        }
+        // Calculate mean using the existing method
         double mean = this.mean();
         
         // Calculate sum of squared differences from the mean

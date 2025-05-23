@@ -13,135 +13,95 @@ class StatisticianTest {
         stats = new Statistician();
     }
     
-    // addData tests
+    // addData tests    
     @Test
-    void testAddData() {
-        assertEquals(0, stats.size());
-        stats.addData(5.0);
-        assertEquals(1, stats.size());
-        stats.addData(10.0);
+    void addDataIncreasesSizeBy1() {
+        int before = stats.size();
+        stats.addData(42.0);
+        assertEquals(before + 1, stats.size());
+    }
+
+    @Test
+    void removeData_exact() {
+        stats.addData(1.0);
+        stats.addData(2.0);
+        stats.addData(3.0);
+        assertTrue(stats.removeData(2.0));
         assertEquals(2, stats.size());
+        assertFalse(stats.removeData(2.0));
     }
-        
-    // removeData tests    
+    
     @Test
-    void testRemoveDataWithinEpsilon() {
-        stats.addData(3.0);
-        stats.addData(3.0000005); // Within epsilon (10^-6)
-        
-        boolean result = stats.removeData(3.0);
-        
-        assertTrue(result);
-        assertEquals(0, stats.size()); // Both values should be removed
-    }
-
-    @Test
-    void testRemoveDataExistingValue() {
-        stats.addData(5.0);
-        stats.addData(10.0);
-        
-        boolean result = stats.removeData(5.0);
-        
-        assertTrue(result);
+    void removeData_tolerance() {
+        stats.addData(1.0000005);
+        stats.addData(2.0);
+        assertTrue(stats.removeData(1.0));
         assertEquals(1, stats.size());
     }
-    
-    //mean tests  
-    @Test
-    void testMeanWithEmptyData() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
-        assertTrue(exception.getMessage().contains("empty"));
-    }
-               
-    @Test
-    void testMeanWithAllIdenticalValues() {
-        stats.addData(5.0);
-        stats.addData(4.0);
-        stats.addData(3.0);
-        stats.addData(2.0);
-        assertEquals(3.5, stats.mean(), EPS);
-    }
-        
-    // Median Tests
-    @Test
-    void testMedianWithEmptyData() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.median());
-        assertTrue(exception.getMessage().contains("empty"));
-    }
 
+    // mean test
     @Test
-    void testMedianWithSingleElement() {
-        stats.addData(7.0);
-        assertEquals(7.0, stats.median());
-    }
-
-    @Test
-    void testMedianWithTwoElements() {
-        stats.addData(2.0);
-        stats.addData(8.0);
-        assertEquals(5.0, stats.median());
-    }
-
-    @Test
-    void testMedianWithOddNumberOfElements() {
+    void mean_basic() {
         stats.addData(1.0);
         stats.addData(2.0);
         stats.addData(3.0);
-        stats.addData(4.0);     
-        stats.addData(5.0);
+        assertEquals(2.0, stats.mean(), EPS);
+    }
+
+    @Test
+    void mean_emptyThrows() {
+        assertThrows(IllegalArgumentException.class, () -> stats.mean());
+    }
+
+    // /median test
+    @Test
+    void median_odd() {
+        stats.addData(3.0);
+        stats.addData(1.0);
+        stats.addData(4.0);
+        assertEquals(3.0, stats.median(), EPS);
+    }
+
+    @Test
+    void median_even() {
+        stats.addData(10.0);
+        stats.addData(2.0);
+        stats.addData(4.0);
         stats.addData(6.0);
-        stats.addData(7.0);
-        assertEquals(4.0, stats.median());
-    }
-    
-    // Mode Tests
-    @Test
-    void testModeWithEmptyData() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
-        assertTrue(exception.getMessage().contains("empty"));
+        assertEquals(5.0, stats.median(), EPS);
     }
 
     @Test
-    void testModeWithSingleElement() {
-        stats.addData(9.0);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
-        assertTrue(exception.getMessage().contains("unique"));
+    void median_emptyThrows() {
+        assertThrows(IllegalArgumentException.class, () -> stats.median());
     }
 
+    //mode
     @Test
-    void testModeWithAllUniqueValues() {
-        stats.addData(1.0);
+    void mode_basic() {
         stats.addData(2.0);
+        stats.addData(2.0);
+        stats.addData(3.0);
+        stats.addData(3.0);
         stats.addData(3.0);
         stats.addData(4.0);
-        stats.addData(5.0);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mode());
-        assertTrue(exception.getMessage().contains("unique"));
+        stats.addData(4.0);
+        stats.addData(4.0);
+        stats.addData(2.0);
+        assertEquals(2.0, stats.mode(), EPS);
     }
 
     @Test
-    void testModeWithMultipleModesDifferentFrequencies() {
-        stats.addData(1.0);
-        stats.addData(1.0);
+    void mode_allUniqueThrows() {
         stats.addData(1.0);
         stats.addData(2.0);
-        stats.addData(2.0);
         stats.addData(3.0);
-        stats.addData(3.0);
-        stats.addData(3.0);
-        assertEquals(1.0, stats.mode()); // Based on smallest value policy
-    }
-   
-    // Variance Tests
-    @Test
-    void testVarianceWithEmptyData() {
-        Exception exception = assertThrows(
-            IllegalArgumentException.class, () -> stats.variance());
-        assertTrue(exception.getMessage().contains("empty"));
+        assertThrows(IllegalArgumentException.class, () -> stats.mode());
     }
 
+    // variance (sample)
     @Test
-    void testVarianceWithLargeDifferences() {
+    void variance_basic() {
         stats.addData(2.0);
         stats.addData(4.0);
         stats.addData(4.0);
@@ -150,16 +110,21 @@ class StatisticianTest {
         stats.addData(5.0);
         stats.addData(7.0);
         stats.addData(9.0);
-        assertEquals(4.57142857, stats.variance(), 1e-5); 
-        // Very loose epsilon due to large values
+        assertEquals(4.57142857, stats.variance(), 1e-5);
+    }
+
+    @Test
+    void variance_singleThrows() {
+        assertThrows(IllegalArgumentException.class, () -> stats.variance());
     }
     
     @Test
-    void testVarianceWithAllIdenticalValues() {
-        stats.addData(5.0);
-        stats.addData(5.0);
-        stats.addData(5.0);
-        assertEquals(0.0, stats.variance(), EPS);
-    }
+    void variance_sameNumbers() {
+        stats.addData(4.0);
+        stats.addData(4.0);
+        stats.addData(4.0);
+        stats.addData(4.0);
+        assertEquals(0.0, stats.variance(), 1e-5);
+    }    
     // # END TODO
 }

@@ -97,16 +97,8 @@ public class Statistician {
      * @return the mean of the dataset
      * @pre {@code data.size() > 0}
      * @post {@code \result == (\sum d; data.contains(d); d) / data.length}
-     * @throws IllegalArgumentException if the dataset is empty
      */
-    public double mean() {
-        // Check if the dataset is empty
-        if (data.isEmpty()) {
-            throw new IllegalArgumentException(
-                "Cannot calculate mean of an empty dataset"
-            );
-        }
-        
+    public double mean() {       
         if (data.size() == 1) {
             return data.get(0);
         }   
@@ -130,16 +122,8 @@ public class Statistician {
      *        (data.length % 2 == 0 ==> 
      *        \result == (sorted[data.length/2 - 1] + sorted[data.length/2]) / 2) &&
      *        (data.length % 2 != 0 ==> \result == sorted[data.length/2])}
-     * @throws IllegalArgumentException if the dataset is empty
      */
-    public double median() {
-        // Check if the dataset is empty
-        if (data.isEmpty()) {
-            throw new IllegalArgumentException(
-                "Cannot calculate median of an empty dataset"
-            );
-        }
-        
+    public double median() {    
         // Create a sorted copy of the data
         List<Double> sortedData = new ArrayList<>(data);
         Collections.sort(sortedData);
@@ -164,11 +148,10 @@ public class Statistician {
      * @post {@code (\exists m; \result == m &&
      *        (\forall d; data.contains(d); frequency(data, d) <= frequency(data, m)))
      * }
-     * @throws IllegalArgumentException if the dataset is empty or all elements are unique
      */
     public double mode() {
-        // no need to Check if the dataset is empty
-
+        // no need to check if the dataset is empty 
+        // as the precondition is already met
         // Create frequency map
         Map<Double, Integer> freqMap = createFrequencyMap();
         
@@ -233,21 +216,18 @@ public class Statistician {
      * @return the variance of the dataset IN 2 DECIMAL PLACES
      * @pre {@code data.size() > 0}
      * @post {@code \result >= 0}
-     * @throws IllegalArgumentException if the dataset is empty or contains invalid values
      */
-    public double variance() {
-        // Check if the dataset is empty
-        if (data.isEmpty()) {
-            throw new IllegalArgumentException(
-                "Cannot calculate variance of an empty dataset");
-        }
-                
+    public double variance() {               
         // Handle single data point case
+        // check if mean of the dataset exists
+
         if (data.size() == 1) {
             return 0.0;
         }
 
-        // Calculate mean using the existing method
+        if (!Double.isFinite(this.mean())) {
+            throw new IllegalArgumentException("Variance calculation failed: invalid mean");
+        }
         double mean = this.mean();
         
         // Calculate sum of squared differences from the mean

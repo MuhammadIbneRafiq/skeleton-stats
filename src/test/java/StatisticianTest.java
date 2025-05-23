@@ -99,13 +99,7 @@ class StatisticianTest {
         assertTrue(exception.getMessage().contains("NaN or Infinite"));
     }
     
-    //mean tests
-    @Test
-    void testMeanWithEmptyData() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.mean());
-        assertTrue(exception.getMessage().contains("empty"));
-    }
-        
+    //mean tests       
     @Test
     void testMeanWithSingleValue() {
         stats.addData(5.0);
@@ -157,7 +151,7 @@ class StatisticianTest {
     }
 
     @Test
-    void testMedanWithAllIdenticalValues() {
+    void testMeanWithAllIdenticalValues() {
         stats.addData(5.0);
         stats.addData(5.0);
         stats.addData(5.0);
@@ -170,12 +164,6 @@ class StatisticianTest {
     void testMedianWithSingleElement() {
         stats.addData(7.0);
         assertEquals(7.0, stats.median());
-    }
-
-    @Test
-    void testMedianWithEmptyData() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.median());
-        assertTrue(exception.getMessage().contains("empty"));
     }
 
     @Test
@@ -334,6 +322,12 @@ class StatisticianTest {
 
     // Variance Tests
     @Test
+    void testVarianceWithOneElements() {
+        stats.addData(1.0);
+        assertEquals(0.0, stats.variance(), 0.000001);
+    }
+
+    @Test
     void testVarianceWithTwoElements() {
         stats.addData(1.0);
         stats.addData(5.0);
@@ -349,10 +343,4 @@ class StatisticianTest {
         assertEquals(6998000.333333334, stats.variance(), 1.0); 
         // Very loose epsilon due to large values
     }
-
-    @Test
-    void testVarianceWithEmptyData() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> stats.variance());
-        assertTrue(exception.getMessage().contains("empty"));
-    }   
 }

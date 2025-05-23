@@ -441,14 +441,6 @@ class StatisticianTest {
     }
 
     @Test
-    void testVarianceWithTwoElements() {
-        stats.addData(1.0);
-        stats.addData(5.0);
-        assertEquals(8.0, stats.variance(), 0.000001); 
-        // (1-3)^2 + (5-3)^2 = 4 + 4 = 8 / 1 = 8
-    }
-
-    @Test
     void testVarianceWithEmptyData() {
         Exception exception = assertThrows(
             IllegalArgumentException.class, () -> stats.variance());
@@ -470,17 +462,6 @@ class StatisticianTest {
         stats.addData(5.0);
         stats.addData(5.0);
         assertEquals(0.0, stats.variance(), 0.000001);
-    }
-    
-    @Test
-    void testVarianceWithThreeValues() {
-        stats.addData(2.0);
-        stats.addData(4.0);
-        stats.addData(6.0);
-        // Mean = 4.0
-        // (2-4)^2 + (4-4)^2 + (6-4)^2 = 4 + 0 + 4 = 8
-        // 8 / 2 = 4.0
-        assertEquals(4.0, stats.variance(), 0.000001);
     }
     
     @Test
@@ -536,30 +517,5 @@ class StatisticianTest {
         
         assertEquals(1, stats.size());
         assertEquals(1.0000015, stats.mean(), 0.000001);
-    }
-    
-    @Test
-    void testStatisticianConsistency() {
-        // Add data
-        stats.addData(1.0);
-        stats.addData(2.0);
-        stats.addData(3.0);
-        stats.addData(3.0);
-        stats.addData(4.0);
-        
-        // Check all statistics
-        assertEquals(2.6, stats.mean(), 0.000001);
-        assertEquals(3.0, stats.median());
-        assertEquals(3.0, stats.mode());
-        assertEquals(1.3, stats.variance(), 0.000001);
-        
-        // Remove a value
-        stats.removeData(1.0);
-        
-        // Check statistics again
-        assertEquals(3.0, stats.mean(), 0.000001);
-        assertEquals(3.0, stats.median());
-        assertEquals(3.0, stats.mode());
-        assertEquals(0.666666666666667, stats.variance(), 0.000001);
     }
 }

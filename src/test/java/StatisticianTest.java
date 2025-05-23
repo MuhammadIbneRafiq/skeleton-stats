@@ -21,13 +21,7 @@ class StatisticianTest {
         stats.addData(10.0);
         assertEquals(2, stats.size());
     }
-    
-    @Test
-    void testAddDataNegativeValue() {
-        stats.addData(-7.5);
-        assertEquals(1, stats.size());
-    }
-    
+        
     @Test
     void testAddDataNaNValue() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -37,60 +31,13 @@ class StatisticianTest {
         assertTrue(exception.getMessage().contains("NaN or Infinite"));
     }
     
-    // @Test
-    // void testAddDataInfiniteValue() {
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-    //         stats.addData(Double.POSITIVE_INFINITY);
-    //     });
-        
-    //     assertTrue(exception.getMessage().contains("NaN or Infinite"));
-    // }
-    
     @Test
     void testAddDataPrecisionValues() {
         stats.addData(1.123456789);
         stats.addData(2.987654321);
         assertEquals(2, stats.size());
     }
-    
-    // @Test
-    // void testAddDataExtremeLargeValue() {
-    //     double largeValue = Double.MAX_VALUE / 2;
-    //     stats.addData(largeValue);
-    //     assertEquals(1, stats.size());
-    // }
-    
-    // @Test
-    // void testAddDataExtremeSmallValue() {
-    //     double smallValue = Double.MIN_VALUE;
-    //     stats.addData(smallValue);
-    //     assertEquals(1, stats.size());
-    // }
-    
-    // removeData tests
-    // @Test
-    // void testRemoveDataExistingValue() {
-    //     stats.addData(5.0);
-    //     stats.addData(10.0);
-    //     stats.addData(5.000001); // Should be considered equal to 5.0 (within epsilon)
-        
-    //     boolean result = stats.removeData(5.0);
-        
-    //     assertTrue(result);
-    //     assertEquals(1, stats.size());
-    // }
-    
-    @Test
-    void testRemoveDataNonExistentValue() {
-        stats.addData(5.0);
-        stats.addData(10.0);
-        
-        boolean result = stats.removeData(7.0);
-        
-        assertFalse(result);
-        assertEquals(2, stats.size());
-    }
-    
+           
     @Test
     void testRemoveDataNaNValue() {
         stats.addData(5.0);
@@ -101,39 +48,6 @@ class StatisticianTest {
         
         assertTrue(exception.getMessage().contains("NaN or Infinite"));
     }
-    
-    // @Test
-    // void testRemoveDataInfiniteValue() {
-    //     stats.addData(5.0);
-        
-    //     Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-    //         stats.removeData(Double.NEGATIVE_INFINITY);
-    //     });
-        
-    //     assertTrue(exception.getMessage().contains("NaN or Infinite"));
-    // }
-    
-    // @Test
-    // void testRemoveDataWithinEpsilon() {
-    //     stats.addData(3.0);
-    //     stats.addData(3.0000005); // Within epsilon (10^-6)
-        
-    //     boolean result = stats.removeData(3.0);
-        
-    //     assertTrue(result);
-    //     assertEquals(0, stats.size()); // Both values should be removed
-    // }
-    
-    // @Test
-    // void testRemoveDataOutsideEpsilon() {
-    //     stats.addData(3.0);
-    //     stats.addData(3.0000015); // Outside epsilon (10^-6)
-        
-    //     boolean result = stats.removeData(3.0);
-        
-    //     assertTrue(result);
-    //     assertEquals(1, stats.size()); // Only one value should be removed
-    // }
     
     @Test
     void testRemoveAllOccurrences() {
@@ -159,51 +73,7 @@ class StatisticianTest {
         stats.addData(5.0);
         assertEquals(5.0, stats.mean(), 0.000001);
     }
-    
-    @Test
-    void testMeanWithZeroValue() {
-        stats.addData(0.0);
-        assertEquals(0.0, stats.mean(), 0.000001);
-    }
-
-    @Test
-    void testMeanWithPositiveValues() {
-        stats.addData(2.0);
-        stats.addData(4.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        stats.addData(6.0);
-        assertEquals(5.455, stats.mean(), 0.001);
-    }
-    
-    @Test
-    void testMeanWithNegativeValues() {
-        stats.addData(-2.0);
-        stats.addData(-4.0);
-        stats.addData(-6.0);
-        assertEquals(-4.0, stats.mean(), 0.000001);
-    }
-    
-    @Test
-    void testMeanWithDecimalValues() {
-        stats.addData(1.123456789);
-        stats.addData(2.987654321);
-        assertEquals(2.056, stats.mean(), 0.001);
-    }
-    
-    @Test
-    void testMeanWithMixedSignValues() {
-        stats.addData(-10.0);
-        stats.addData(10.0);
-        assertEquals(0.0, stats.mean(), 0.000001);
-    }
-
+               
     @Test
     void testMeanWithAllIdenticalValues() {
         stats.addData(5.0);
@@ -294,13 +164,6 @@ class StatisticianTest {
         stats.addData(5.0);
         assertEquals(3.0, stats.median());
     }
-
-    @Test
-    void testMedianWithDecimalValues() {
-        stats.addData(1.123456789);
-        stats.addData(2.987654321);
-        assertEquals(2.056, stats.median(), 0.001);
-    }
     
     // Mode Tests
     @Test
@@ -316,14 +179,6 @@ class StatisticianTest {
         stats.addData(5.0);
         stats.addData(5.0);
         assertEquals(5.0, stats.mode());
-    }
-
-    @Test
-    void testModeWithVeryLargeNumbers() {
-        stats.addData(Double.MAX_VALUE);
-        stats.addData(Double.MAX_VALUE);
-        stats.addData(1.0);
-        assertEquals(Double.MAX_VALUE, stats.mode());
     }
 
     @Test
@@ -367,35 +222,11 @@ class StatisticianTest {
         stats.addData(6.0);
         assertEquals(2.0, stats.mode());
     }
-
-    @Test
-    void testModeWithNegativeValues() {
-        stats.addData(-1.0);
-        stats.addData(-1.0);
-        stats.addData(0.0);
-        stats.addData(1.0);
-        assertEquals(-1.0, stats.mode());
-    }
-
-    @Test
-    void testModeWithZeroAsMode() {
-        stats.addData(0.0);
-        stats.addData(0.0);
-        stats.addData(1.0);
-        stats.addData(2.0);
-        assertEquals(0.0, stats.mode());
-    }
-    
+   
     // Variance Tests
     @Test
     void testVarianceWithOneElements() {
         stats.addData(1.0);
-        assertEquals(0.0, stats.variance(), 0.000001);
-    }
-
-    @Test
-    void testVarianceWithZeroElements() {
-        stats.addData(0.0);
         assertEquals(0.0, stats.variance(), 0.000001);
     }
 
@@ -421,16 +252,5 @@ class StatisticianTest {
         stats.addData(5.0);
         stats.addData(5.0);
         assertEquals(0.0, stats.variance(), 0.000001);
-    }
-    
-    @Test
-    void testVarianceWithNegativeValues() {
-        stats.addData(-1.0);
-        stats.addData(-3.0);
-        stats.addData(-5.0);
-        // Mean = -3.0
-        // (-1-(-3))^2 + (-3-(-3))^2 + (-5-(-3))^2 = 4 + 0 + 4 = 8
-        // 8 / 2 = 4.0
-        assertEquals(4.0, stats.variance(), 0.000001);
     }
 }

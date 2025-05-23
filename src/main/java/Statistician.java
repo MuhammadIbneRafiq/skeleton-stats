@@ -239,29 +239,24 @@ public class Statistician {
      *       \result == (\sum i; data.has(i); (data[i] - mean)^2) / (data.length - 1)}
      */
     public double variance() {          
-        // check if the dataset is empty
         if (data.size() == 0) {
             throw new IllegalArgumentException(
                 "Cannot calculate variance of an empty dataset"
             );
         }
         
-        // Handle single data point case
         if (data.size() == 1) {
             return 0.0;
         }
 
-        // Calculate mean using the existing method
         double mean = this.mean();
         
-        // Calculate sum of squared differences from the mean
         double sumSquaredDifferences = 0.0;
         for (Double value : data) {
             double diff = value - mean;
             sumSquaredDifferences += diff * diff;
         }
         
-        // Calculate variance using the n-1 formula for sample variance
         double result = sumSquaredDifferences / (data.size() - 1);
         
         return result;

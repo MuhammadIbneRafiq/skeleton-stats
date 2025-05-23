@@ -3,15 +3,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Iterator;
 
 /**
- * A class that maintains a dataset and provides statistical calculations such
- * as mean, median, mode, and variance. Supports adding and removing data
- * points.
- * <!--//# BEGIN TODO: Name, student ID, and date-->
+ * A class that maintains a dataset and provides statistical calculations
+ * such as mean, median, mode, and variance. Supports adding and removing
+ * data points.
+ *
  * <p><b>Muhammad Rafiq, 1924214, 20 May</b></p>
- * <!--//# END TODO-->
  */
 public class Statistician {
 
@@ -22,241 +20,129 @@ public class Statistician {
      * Adds a data point to the dataset.
      *
      * @param value the data point to add
-     * @modifies {@code this.data}
-     * @post {@code data.length == \old(data.length) + 1 &&
-     *        data[data.length] - 1) == value}
+     * @post the size of the dataset increases by one
+     * @post the last element of the dataset is equal to {@code value}
      */
     public void addData(double value) {
         data.add(value);
     }
 
     /**
-     * Removes all occurrences of the specified value from the dataset.
-     * Note that we consider two values that differ by at most 10^-6 equal (denoted by ~ below).
+     * Removes all elements approximately equal to the specified value (within
+     * EPSILON) from the dataset.
      *
-     * @param value the data point to remove
-     * @return true if any elements were removed, false otherwise
-     * @modifies {@code this.data}
-     * @post {@code (\forall i; data.has(i); data[i] != value) &&
-     *        data.length == \old(data.length) - (\sum i; 0 <= i < \old(data.length) &&
-     *        \old(data[i]) ~ value; 1) &&
-     *        \result == (\sum i; 0 <= i < \old(data.length) && \old(data[i]) ~ value; 1) > 0
-     * }
+     * @param value the target data point to remove
+     * @return {@code true} if one or more elements were removed; {@code false}
+     *         otherwise
+     * @post no element in the dataset differs from {@code value} by at most
+     *       EPSILON
      */
-    public boolean removeData(double value) {       
+    public boolean removeData(double value) {
         boolean removed = false;
-        Iterator<Double> iterator = data.iterator();
-        
-        // Special case for the test
-        if (isTestRemoveCase()) {
-            return handleTestRemoveCase();
-        }
-        
-        // Remove all values that differ from the given value by at most EPSILON
+        var iterator = data.iterator();
         while (iterator.hasNext()) {
-            Double d = iterator.next();
-            if (Math.abs(d - value) <= EPSILON) {
+            if (Math.abs(iterator.next() - value) <= EPSILON) {
                 iterator.remove();
                 removed = true;
             }
-
         }
-        
         return removed;
-    }
-
-    private boolean isTestRemoveCase() {
-        // Special case detection for test cases
-        return data.size() == 3 
-            && data.contains(5.0) 
-            && data.contains(10.0);
-    }
-
-    private boolean handleTestRemoveCase() {
-        // Handle the special test case
-        data.clear();
-        data.add(10.0);
-        return true;
     }
 
     /**
      * Calculates the mean (average) of the dataset.
      *
-     * @return the mean of the dataset
-     * @pre {@code data.size() > 0}
-     * @post {@code \result == (\sum d; data.contains(d); d) / data.length}
+     * @return the mean of all data points
+     * @throws IllegalArgumentException if the dataset is empty
      */
-    public double mean() {     
-        // check if the dataset is empty
-        if (data.size() == 0) {
-            throw new IllegalArgumentException(
-                "Cannot calculate mean of an empty dataset"
-            );
+    public double mean() {
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("Dataset is empty");
         }
-        
-        if (data.size() == 1) {
-            return data.get(0);
-        }   
-
         double sum = 0.0;
-        for (Double value : data) {
-            sum += value;
+        for (double v : data) {
+            sum += v;
         }
-        
-        return sum / data.size();        
+        return sum / data.size();
     }
 
     /**
      * Calculates the median of the dataset.
      *
-     * @return the median of the dataset
-     * @pre {@code data.size() > 0}
-     * @post {@code (\exists sorted; sorted.length == data.length
-     *        && multiset(sorted) == multiset(data) &&
-     *        (\forall i; 0 < i < sorted.length; sorted[i-1] <= sorted[i])) &&
-     *        (data.length % 2 == 0 ==> 
-     *        \result == (sorted[data.length/2 - 1] + sorted[data.length/2]) / 2) &&
-     *        (data.length % 2 != 0 ==> \result == sorted[data.length/2])}
+     * @return the median value
+     * @throws IllegalArgumentException if the dataset is empty
      */
-    public double median() {    
-        // check if the dataset is empty
-        if (data.size() == 0) {
-            throw new IllegalArgumentException(
-                "Cannot calculate median of an empty dataset"
-            );
+    public double median() {
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("Dataset is empty");
         }
-        
-        // Create a sorted copy of the data
-        List<Double> sortedData = new ArrayList<>(data);
-        Collections.sort(sortedData);
-        
-        int size = sortedData.size();
-        if (size % 2 == 0) {
-            // Even number of elements: average the middle two
-            return (sortedData.get(size / 2 - 1) + sortedData.get(size / 2)) / 2.0;
-        } else {
-            // Odd number of elements: return the middle one
-            return sortedData.get(size / 2);
+        List<Double> copy = new ArrayList<>(data);
+        Collections.sort(copy);
+        int n = copy.size();
+        if (n % 2 == 0) {
+            return (copy.get(n / 2 - 1) + copy.get(n / 2)) / 2.0;
         }
+        return copy.get(n / 2);
     }
 
     /**
-     * Calculates the mode of the dataset (most frequent value). Note that the
-     * mode does not exist if all element as unique! If multiple elements have the same
-     * frequency, the smallest one is returned.
+     * Calculates the mode (most frequent value) of the dataset. If multiple
+     * values share the highest frequency, returns the smallest.
      *
      * @return the mode of the dataset
-     * @pre  {@code data.size() > 0 && (\exists d; data.contains(d); frequency(data, d) > 1)}
-     * @post {@code (\exists m; \result == m &&
-     *        (\forall d; data.contains(d); frequency(data, d) <= frequency(data, m)))
-     * }
+     * @throws IllegalArgumentException if the dataset is empty or all
+     *         values are unique
      */
     public double mode() {
-        // check if the dataset is empty
-        if (data.size() == 0) {
-            throw new IllegalArgumentException(
-                "Cannot calculate mode of an empty dataset"
-            );
+        if (data.isEmpty()) {
+            throw new IllegalArgumentException("Dataset is empty");
         }
-        
-        // Create frequency map
-        Map<Double, Integer> freqMap = createFrequencyMap();
-        
-        // Find the maximum frequency
-        int maxFrequency = findMaxFrequency(freqMap);
-        
-        // Check if all elements are unique
-        if (maxFrequency <= 1) {
-            throw new IllegalArgumentException(
-                "Mode does not exist as all elements are unique"
-            );
-        }
-        
-        // Find the smallest value with maximum frequency
-        return findSmallestWithMaxFrequency(freqMap, maxFrequency);
-    }
-
-    private Map<Double, Integer> createFrequencyMap() {
-        Map<Double, Integer> frequencyMap = new HashMap<>();
-        
-        for (Double value : data) {
-            boolean found = false;
-            for (Double key : frequencyMap.keySet()) {
-                if (Math.abs(key - value) <= EPSILON) {
-                    frequencyMap.put(key, frequencyMap.get(key) + 1);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                frequencyMap.put(value, 1);
+        Map<Double, Integer> freq = new HashMap<>();
+        double bestValue = Double.MAX_VALUE;
+        int bestCount = 0;
+        for (double v : data) {
+            double key = Math.round(v / EPSILON) * EPSILON;
+            int count = freq.merge(key, 1, Integer::sum);
+            if (count > bestCount || (count == bestCount && key < bestValue)) {
+                bestCount = count;
+                bestValue = key;
             }
         }
-        
-        return frequencyMap;
-    }
-
-    private int findMaxFrequency(Map<Double, Integer> frequencyMap) {
-        int maxFrequency = 0;
-        for (Integer frequency : frequencyMap.values()) {
-            maxFrequency = Math.max(maxFrequency, frequency);
+        if (bestCount <= 1) {
+            throw new IllegalArgumentException("No mode: all values are unique");
         }
-        return maxFrequency;
-    }
-
-    private double findSmallestWithMaxFrequency(
-        Map<Double, Integer> frequencyMap, 
-        int maxFrequency
-    ) {
-        double mode = Double.MAX_VALUE;
-        for (Map.Entry<Double, Integer> entry : frequencyMap.entrySet()) {
-            if (entry.getValue() == maxFrequency && entry.getKey() < mode) {
-                mode = entry.getKey();
-            }
-        }
-        return mode;
+        return bestValue;
     }
 
     /**
      * Calculates the sample variance of the dataset.
      *
      * @return the sample variance
-     * @pre {@code data.size() > 0}
-     * @post {@code (\exists mean; ; mean == (\sum i; data.has(i); data[i])) &&
-     *       \result == (\sum i; data.has(i); (data[i] - mean)^2) / (data.length - 1)}
+     * @throws IllegalArgumentException if the dataset is empty
      */
-    public double variance() {          
-        if (data.size() == 0) {
-            throw new IllegalArgumentException(
-                "Cannot calculate variance of an empty dataset"
-            );
+    public double variance() {
+        int n = data.size();
+        if (n == 0) {
+            throw new IllegalArgumentException("Dataset is empty");
         }
-        
-        if (data.size() == 1) {
+        if (n == 1) {
             return 0.0;
         }
-
-        double mean = this.mean();
-        
-        double sumSquaredDifferences = 0.0;
-        for (Double value : data) {
-            double diff = value - mean;
-            sumSquaredDifferences += diff * diff;
+        double mean = mean();
+        double sumSq = 0.0;
+        for (double v : data) {
+            double diff = v - mean;
+            sumSq += diff * diff;
         }
-        
-        double result = sumSquaredDifferences / (data.size() - 1);
-        
-        return result;
+        return sumSq / (n - 1);
     }
 
     /**
      * Returns the number of data points in the dataset.
-     * @return the size of the dataset
-     * @post {@code \result == data.length}
+     *
+     * @return the dataset size
      */
     public int size() {
         return data.size();
     }
-    // # END TODO
-
 }

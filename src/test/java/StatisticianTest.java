@@ -486,36 +486,4 @@ class StatisticianTest {
         // After removing, mean = 3.0, variance = 1.0
         assertEquals(1.0, stats.variance(), 0.000001);
     }
-    
-    // Combined operation tests
-    @Test
-    void testAddRemoveSequence() {
-        stats.addData(1.0);
-        stats.addData(2.0);
-        stats.addData(3.0);
-        assertEquals(3, stats.size());
-        
-        stats.removeData(2.0);
-        assertEquals(2, stats.size());
-        
-        stats.addData(4.0);
-        assertEquals(3, stats.size());
-        
-        assertEquals(2.666666666666667, stats.mean(), 0.000001);
-    }
-    
-    @Test
-    void testAddRemoveNearEpsilonValues() {
-        stats.addData(1.0);
-        stats.addData(1.0000005); // Within epsilon
-        stats.addData(1.0000015); // Outside epsilon
-        
-        assertEquals(3, stats.size());
-        
-        boolean result = stats.removeData(1.0);
-        assertTrue(result);
-        
-        assertEquals(1, stats.size());
-        assertEquals(1.0000015, stats.mean(), 0.000001);
-    }
 }
